@@ -1,0 +1,349 @@
+<%- include('partials/header') %>
+    <style>
+        .cabinet_wrap {
+            max-width: 900px;
+            margin: 48px auto 80px;
+            padding: 0 20px;
+        }
+
+        .cabinet_wrap h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .cabinet_lead {
+            color: #666;
+            margin-bottom: 28px;
+            font-size: 15px;
+        }
+
+        .user_card {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 28px;
+            align-items: start;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 32px;
+        }
+
+        .avatar_ring {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #f5f5f7;
+            border: 2px solid #eee;
+            flex-shrink: 0;
+        }
+
+        .avatar_ring img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .avatar_stub {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            font-weight: 700;
+            color: #ccc;
+        }
+
+        .user_card h2 {
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .mail_line {
+            color: #666;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        .flash_msg {
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .flash_msg.ok {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+
+        .flash_msg.err {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .form_field label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .form_field input[type="url"],
+        .form_field input[type="text"] {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .form_field input:focus {
+            outline: none;
+            border-color: #ff4d4d;
+        }
+
+        .field_tip {
+            font-size: 12px;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        .btn_save {
+            margin-top: 14px;
+            padding: 12px 22px;
+            background: #ff4d4d;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .btn_save:hover {
+            filter: brightness(1.05);
+        }
+
+        .block_title {
+            font-size: 20px;
+            margin-bottom: 14px;
+        }
+
+        .orders_table_wrap {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .orders_table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .orders_table th {
+            text-align: left;
+            padding: 14px 16px;
+            background: #fafafa;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .orders_table td {
+            padding: 14px 16px;
+            border-top: 1px solid #f2f2f2;
+            vertical-align: middle;
+        }
+
+        .order_ref {
+            font-weight: 700;
+            color: #ff4d4d;
+            font-family: ui-monospace, monospace;
+        }
+
+        .tag_status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .tag_status.ready {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .tag_status.done {
+            background: #f4f4f5;
+            color: #52525b;
+        }
+
+        .empty_text {
+            padding: 40px 20px;
+            text-align: center;
+            color: #999;
+        }
+
+        @media (max-width: 600px) {
+            .user_card {
+                grid-template-columns: 1fr;
+                justify-items: center;
+                text-align: center;
+            }
+
+            .form_field input {
+                text-align: center;
+            }
+        }
+    </style>
+
+    <div class="cabinet_wrap">
+        <h1>Личный кабинет</h1>
+        <p class="cabinet_lead">Ваши данные, история онлайн-заказов и бронирований цветов.</p>
+
+        <div class="user_card">
+            <div class="avatar_ring">
+                <% const av=(profile && profile.avatarUrl) ? profile.avatarUrl.trim() : '' ; %>
+                    <% if (av) { %>
+                        <img src="<%= av %>" alt="" referrerpolicy="no-referrer"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="avatar_stub" style="display:none;">
+                            <%= (profile.name && profile.name[0]) ? profile.name[0].toUpperCase() : '?' %>
+                        </div>
+                        <% } else { %>
+                            <div class="avatar_stub">
+                                <%= (profile.name && profile.name[0]) ? profile.name[0].toUpperCase() : '?' %>
+                            </div>
+                            <% } %>
+            </div>
+            <div>
+                <% if (profileMsg==='saved' ) { %>
+                    <div class="flash_msg ok">Аватар сохранён.</div>
+                    <% } %>
+                        <% if (profileErr==='invalid_url' ) { %>
+                            <div class="flash_msg err">Укажите корректную ссылку: адрес должен начинаться с https://
+                                или http://</div>
+                            <% } %>
+                                <% if (profileErr==='save' ) { %>
+                                    <div class="flash_msg err">Не удалось сохранить. Попробуйте позже.</div>
+                                    <% } %>
+                                        <h2>
+                                            <%= profile.name %>
+                                        </h2>
+                                        <p class="mail_line">
+                                            <%= profile.email %>
+                                        </p>
+
+                                        <form action="/account/profile" method="POST">
+                                            <div class="form_field">
+                                                <label for="avatarUrl">Аватар (ссылка на изображение)</label>
+                                                <input type="url" id="avatarUrl" name="avatarUrl"
+                                                    placeholder="https://…" maxlength="2000" value="<%= av %>">
+                                                <p class="field_tip">Вставьте прямую ссылку на картинку (JPG, PNG и т.п.).
+                                                    Поле можно очистить и сохранить, чтобы убрать аватар.</p>
+                                            </div>
+                                            <button type="submit" class="btn_save">Сохранить аватар</button>
+                                        </form>
+            </div>
+        </div>
+
+        <h2 class="block_title">История онлайн-заказов</h2>
+        <% if (!orders || orders.length===0) { %>
+            <div class="orders_table_wrap">
+                <p class="empty_text">Пока нет заказов. Оформите букет на странице <a href="/custom-order"
+                        style="color:#ff4d4d;font-weight:600;">индивидуального заказа</a>.</p>
+            </div>
+            <% } else { %>
+                <div class="orders_table_wrap">
+                    <table class="orders_table">
+                        <thead>
+                            <tr>
+                                <th>Код</th>
+                                <th>Дата</th>
+                                <th>Статус</th>
+                                <th>Сумма (ориентир)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% orders.forEach(o=> { %>
+                                <tr>
+                                    <td><span class="order_ref">
+                                            <%= o.orderCode || '—' %>
+                                        </span></td>
+                                    <td>
+                                        <%= new Date(o.createdAt).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' }) %>
+                                    </td>
+                                    <td>
+                                        <% const lab=orderStatusLabels[o.status] || o.status; const cls=o.status==='ready' ? 'ready' : (o.status==='completed' ? 'done' : ''); %>
+                                            <span class="tag_status <%= cls %>">
+                                                <%= lab %>
+                                            </span>
+                                    </td>
+                                    <td>
+                                        <%= o.estimatedPrice %> ₽
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+                <% } %>
+
+                    <h2 class="block_title" style="margin-top: 28px;">Мои бронирования цветов</h2>
+                    <% if (!reservations || reservations.length===0) { %>
+                        <div class="orders_table_wrap">
+                            <p class="empty_text">Пока нет бронирований. Выберите букет в <a href="/catalog"
+                                    style="color:#ff4d4d;font-weight:600;">каталоге</a> и нажмите
+                                «Забронировать».</p>
+                        </div>
+                        <% } else { %>
+                            <div class="orders_table_wrap">
+                                <table class="orders_table">
+                                    <thead>
+                                        <tr>
+                                            <th>Букет</th>
+                                            <th>Контакт</th>
+                                            <th>Когда заберёте</th>
+                                            <th>Создано</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% reservations.forEach(r=> { %>
+                                            <tr>
+                                                <td>
+                                                    <strong>
+                                                        <%= r.productName %>
+                                                    </strong>
+                                                </td>
+                                                <td>
+                                                    <%= r.lastName %>
+                                                        <%= r.firstName %><br>
+                                                            <span style="color:#777;">
+                                                                <%= r.phone %>
+                                                            </span>
+                                                </td>
+                                                <td>
+                                                    <%= r.pickupAt %>
+                                                </td>
+                                                <td>
+                                                    <%= new Date(r.createdAt).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' }) %>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <% } %>
+    </div>
+
+    <%- include('partials/footer') %>

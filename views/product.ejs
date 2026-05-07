@@ -1,0 +1,15 @@
+<%- include('partials/header') %>
+        <div class="max-w-4xl mx-auto p-20 flex gap-10">
+                <img src="<%= product.image %>" class="w-1/2 rounded-3xl shadow-2xl">
+                <div>
+                        <h1 class="text-4xl font-serif mb-4">
+                                <%= product.name %>
+                        </h1>
+                        <p class="text-2xl text-pink-600 mb-6">
+                                <%= product.price %> ₽
+                        </p>
+                        <p class="text-gray-600 mb-8">
+                                <%= product.description %>
+                        </p><button class="bg-gray-900 text-white px-8 py-3 rounded-full">Добавить в корзину</button>
+                </div>
+        </div>

@@ -1,0 +1,207 @@
+<%- include('partials/header') %>
+    <style>
+        .orders_page {
+            max-width: 1200px;
+            margin: 40px auto 60px;
+            padding: 0 20px;
+        }
+
+        .page_head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .page_head h1 {
+            font-size: 26px;
+        }
+
+        .back_link {
+            color: #2563eb;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .back_link:hover {
+            text-decoration: underline;
+        }
+
+        .table_shell {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 15px;
+            overflow: auto;
+        }
+
+        .data_table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 900px;
+        }
+
+        .data_table th {
+            background: #f9f9f9;
+            padding: 12px 10px;
+            text-align: left;
+            color: #666;
+        }
+
+        .data_table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #f2f2f2;
+            vertical-align: top;
+        }
+
+        .order_ref {
+            font-weight: 700;
+            color: #ff4d4d;
+            font-family: ui-monospace, monospace;
+        }
+
+        .items_line {
+            font-size: 12px;
+            color: #666;
+            max-width: 220px;
+        }
+
+        .status_form {
+            margin: 0;
+        }
+
+        .status_form select {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 13px;
+            min-width: 150px;
+        }
+    </style>
+
+    <div class="orders_page">
+        <div class="page_head">
+            <h1>Индивидуальные заказы</h1>
+            <a href="/admin" class="back_link">← К товарам и категориям</a>
+        </div>
+
+        <% if (!orders || orders.length===0) { %>
+            <p style="color:#888;">Заказов пока нет.</p>
+            <% } else { %>
+                <div class="table_shell">
+                    <table class="data_table">
+                        <thead>
+                            <tr>
+                                <th>Код</th>
+                                <th>Дата</th>
+                                <th>Клиент</th>
+                                <th>Контакты</th>
+                                <th>Состав</th>
+                                <th>Сумма</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% orders.forEach(o=> { %>
+                                <tr>
+                                    <td><span class="order_ref">
+                                            <%= o.orderCode || '—' %>
+                                        </span></td>
+                                    <td>
+                                        <%= new Date(o.createdAt).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' }) %>
+                                    </td>
+                                    <td>
+                                        <%= o.fullName %>
+                                    </td>
+                                    <td>
+                                        <%= o.phone %><br><span style="color:#888;">
+                                                <%= o.email %>
+                                            </span></td>
+                                    <td>
+                                        <div class="items_line">
+                                            <% if (o.stems && o.stems.length) { %>
+                                                <%= o.stems.map(s=> `${s.name} ×${s.qty}`).join(', ') %>
+                                                    <% } else { %>—
+                                                        <% } %>
+                                                            <% if (o.greenery) { %><br><span>+ зелень</span>
+                                                                <% } %>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <%= o.estimatedPrice %> ₽
+                                    </td>
+                                    <td>
+                                        <form class="status_form" method="POST"
+                                            action="/admin/orders/<%= o._id %>/status">
+                                            <select name="status" onchange="this.form.submit()">
+                                                <% orderStatuses.forEach(sv=> { %>
+                                                    <option value="<%= sv %>" <%=o.status===sv ? 'selected' : '' %>><%=
+                                                            orderStatusLabels[sv] || sv %>
+                                                    </option>
+                                                    <% }) %>
+                                            </select>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="7"
+                                        style="background:#fafafa;font-size:12px;color:#555;border-bottom:2px solid #eee;">
+                                        <strong>Комментарий:</strong>
+                                        <%= o.comment || '—' %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+                <% } %>
+
+                    <div class="page_head" style="margin-top: 32px;">
+                        <h1>Бронирование цветов</h1>
+                    </div>
+                    <% if (!reservations || reservations.length===0) { %>
+                        <p style="color:#888;">Бронирований пока нет.</p>
+                        <% } else { %>
+                            <div class="table_shell">
+                                <table class="data_table" style="min-width: 760px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Дата</th>
+                                            <th>Букет</th>
+                                            <th>Клиент</th>
+                                            <th>Телефон</th>
+                                            <th>Когда заберут</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% reservations.forEach(r=> { %>
+                                            <tr>
+                                                <td>
+                                                    <%= new Date(r.createdAt).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' }) %>
+                                                </td>
+                                                <td>
+                                                    <strong>
+                                                        <%= r.productName %>
+                                                    </strong>
+                                                </td>
+                                                <td>
+                                                    <%= r.lastName %>
+                                                        <%= r.firstName %>
+                                                </td>
+                                                <td>
+                                                    <%= r.phone %>
+                                                </td>
+                                                <td>
+                                                    <%= r.pickupAt %>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <% } %>
+    </div>
+
+    <%- include('partials/footer') %>

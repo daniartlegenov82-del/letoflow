@@ -1,0 +1,130 @@
+<style>
+    .foot_bg {
+        margin-top: 50px;
+        background: linear-gradient(rgba(0, 30, 20, 0.85), rgba(0, 30, 20, 0.85)),
+            url('https://abrakadabra.fun/uploads/posts/2022-02/1644368527_1-abrakadabra-fun-p-anime-fon-lug-1.jpg');
+        background-size: cover;
+        background-position: center;
+        color: #fff;
+        padding: 80px 0 80px 0;
+    }
+
+    .foot_inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 1.5fr 1fr 1fr;
+        gap: 60px;
+    }
+
+    .foot_col h4 {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 25px;
+        color: #fff;
+    }
+
+    .foot_col ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .foot_col ul li {
+        margin-bottom: 12px;
+    }
+
+    .foot_col ul li a {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.3s;
+    }
+
+    .foot_col ul li a:hover {
+        color: #ff4d4d;
+    }
+
+    .btn-add {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
+        padding: 12px 25px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 15px;
+        transition: 0.3s;
+    }
+
+    .btn-add:hover {
+        background: #ff4d4d;
+        border-color: #ff4d4d;
+    }
+
+    .foot_contact a {
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.3s;
+    }
+
+    .foot_contact a:hover {
+        color: #ff4d4d;
+    }
+
+    .foot_bottom {
+        max-width: 1200px;
+        margin: 48px auto 0;
+        padding: 24px 20px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.45);
+        text-align: center;
+    }
+
+    @media (max-width: 960px) {
+        .foot_inner {
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+    }
+</style>
+
+<footer class="foot_bg">
+    <div class="foot_inner">
+
+        <div class="foot_col">
+            <h2 style="color: #ff4d4d; font-size: 32px; font-weight: 800; margin-bottom: 20px;">LetoFlowers</h2>
+            <p style="font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 20px;">Дарим радость в Оренбурге с
+                каждым букетом.</p>
+        </div>
+
+        <div class="foot_col">
+            <h4>Связаться с нами</h4>
+            <p style="font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.6;">
+                г. Оренбург,<br>
+                ул. Правды, 10А<br><br>
+                Режим работы:<br>
+                круглосуточно
+            </p>
+            <p class="foot_contact" style="margin-top: 18px; line-height: 1.8;">
+                <a href="tel:+79226258775">+7 (922) 625-87-75</a><br>
+                <a href="mailto:LetoFlowers56@mail.ru">LetoFlowers56@mail.ru</a>
+            </p>
+        </div>
+
+        <div class="foot_col">
+            <h4>Разделы сайта</h4>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/catalog">Каталог</a></li>
+                <li><a href="/custom-order">Заказ букета</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/reviews">Отзывы</a></li>
+                <li><a href="/contacts">Контакты</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>

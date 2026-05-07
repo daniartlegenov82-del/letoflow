@@ -1,0 +1,215 @@
+<%- include('partials/header') %>
+    <style>
+        .reviews_wrap {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .reviews_layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .page_title {
+            font-size: 42px;
+            margin-bottom: 40px;
+        }
+
+        .review_list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .review_item {
+            background: #fff;
+            padding: 30px;
+            border-radius: 25px;
+            border: 1px solid #f0f0f0;
+            transition: 0.3s;
+        }
+
+        .review_top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .author_name {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .stars {
+            color: #facc15;
+            font-size: 14px;
+        }
+
+        .review_body {
+            color: #444;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .review_when {
+            font-size: 12px;
+            color: #bbb;
+            margin-top: 15px;
+        }
+
+        .admin_row {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn_delete {
+            font-size: 13px;
+            font-weight: 600;
+            color: #dc2626;
+            text-decoration: none;
+        }
+
+        .btn_delete:hover {
+            text-decoration: underline;
+        }
+
+        .post_form {
+            position: sticky;
+            top: 120px;
+            background: #fff;
+            padding: 35px;
+            border-radius: 30px;
+            border: 1px solid #eee;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+        }
+
+        .post_form h2 {
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+
+        .field_group {
+            margin-bottom: 20px;
+        }
+
+        .field_group label {
+            display: block;
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .field_group input,
+        .field_group textarea,
+        .field_group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            background: #fdfdfd;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .field_group input:focus,
+        .field_group textarea:focus {
+            border-color: #ff4d4d;
+        }
+
+        .btn_send {
+            width: 100%;
+            padding: 15px;
+            background: #1a1a1a;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn_send:hover {
+            background: #ff4d4d;
+        }
+
+        @media (max-width: 900px) {
+            .reviews_layout {
+                grid-template-columns: 1fr;
+            }
+
+            .post_form {
+                position: static;
+            }
+        }
+    </style>
+
+    <div class="reviews_wrap">
+        <h1 class="page_title">Отзывы клиентов</h1>
+
+        <div class="reviews_layout">
+            <div class="review_list">
+                <% if (reviews.length===0) { %>
+                    <div style="text-align: center; padding: 100px 0; color: #ccc;">
+                        <p style="font-size: 20px;">Здесь пока нет отзывов. Станьте первым! 🌸</p>
+                    </div>
+                    <% } %>
+
+                        <% reviews.forEach(r=> { %>
+                            <div class="review_item">
+                                <div class="review_top">
+                                    <span class="author_name">
+                                        <%= r.name %>
+                                    </span>
+                                    <div class="stars">
+                                        <% for(let i=0; i < r.rating; i++) { %>★<% } %>
+                                                <% for(let i=r.rating; i < 5; i++) { %>☆<% } %>
+                                    </div>
+                                </div>
+                                <div class="review_body">«<%= r.comment %>»</div>
+                                <div class="review_when">
+                                    <%= r.createdAt.toLocaleDateString('ru-RU') %>
+                                </div>
+                                <% if (user && user.role==='admin' ) { %>
+                                    <div class="admin_row">
+                                        <a href="/reviews/delete/<%= r._id %>" class="btn_delete"
+                                            onclick="return confirm('Удалить этот отзыв?')">Удалить отзыв</a>
+                                    </div>
+                                    <% } %>
+                            </div>
+                            <% }) %>
+            </div>
+
+            <aside class="post_form">
+                <h2>Оставить отзыв</h2>
+                <form action="/reviews" method="POST">
+                    <div class="field_group">
+                        <label>Ваше имя</label>
+                        <input type="text" name="name" placeholder="Введите имя" value="<%= user ? user.name : '' %>"
+                            required>
+                    </div>
+                    <div class="field_group">
+                        <label>Оценка</label>
+                        <select name="rating" required>
+                            <option value="5">⭐⭐⭐⭐⭐</option>
+                            <option value="4">⭐⭐⭐⭐</option>
+                            <option value="3">⭐⭐⭐</option>
+                            <option value="2">⭐⭐</option>
+                            <option value="1">⭐</option>
+                        </select>
+                    </div>
+                    <div class="field_group">
+                        <label>Ваш комментарий</label>
+                        <textarea name="comment" rows="5" placeholder="Поделитесь впечатлениями..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn_send">Опубликовать</button>
+                </form>
+            </aside>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

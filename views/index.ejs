@@ -1,0 +1,383 @@
+<%- include('partials/header') %>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <style>
+        html,
+        body {
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+        }
+
+        .home_wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .home_title {
+            font-size: 42px;
+            font-weight: 700;
+            margin: 40px 0 10px 0;
+            color: #1a1a1a;
+        }
+
+        .promo_slider {
+            margin: 30px 0 60px 0;
+            border-radius: 30px;
+            overflow: hidden;
+            height: 400px;
+            position: relative;
+            width: 100%;
+        }
+
+        .promo_slide {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 80px;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .promo_text {
+            max-width: 500px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .promo_text h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .promo_text p {
+            font-size: 18px;
+            color: #444;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .promo_img {
+            position: absolute;
+            right: 20px;
+            bottom: -30px;
+            height: 110%;
+            z-index: 1;
+            pointer-events: none;
+            object-fit: contain;
+            transition: all 1s ease;
+        }
+
+        .swiper-pagination {
+            bottom: 30px !important;
+            text-align: left !important;
+            padding-left: 80px;
+        }
+
+        .swiper-pagination-bullet-active {
+            background: #ff4d4d !important;
+        }
+
+
+        .cat_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 60px;
+        }
+
+        .cat_tile {
+            background: #F5F5F7;
+            border-radius: 30px;
+            height: 160px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: #1a1a1a;
+            border: 1.5px solid transparent;
+            transition: all 0.4s ease;
+            display: block;
+        }
+
+        .cat_tile:hover {
+            border-color: #ff4d4d;
+            background: #fff;
+        }
+
+        .cat_tile p {
+            font-size: 16px;
+            font-weight: 400;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tile_img {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            pointer-events: none;
+            transition: 0.4s;
+        }
+
+        .cat_tile:hover .tile_img {
+            transform: scale(1.1);
+        }
+
+
+        .nav_cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            height: 550px;
+            margin-bottom: 80px;
+        }
+
+        .nav_card {
+            position: relative;
+            border-radius: 35px;
+            overflow: hidden;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            background-image: url('https://content3.flowwow-images.com/data/blog/52/1684843145_26233352.jpg');
+            background-size: 400% 105%;
+            transition: all 0.5s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .nav_card:nth-child(1) {
+            background-position: 0% 50%;
+        }
+
+        .nav_card:nth-child(2) {
+            background-position: 33.33% 50%;
+        }
+
+        .nav_card:nth-child(3) {
+            background-position: 66.66% 50%;
+        }
+
+        .nav_card:nth-child(4) {
+            background-position: 100% 50%;
+        }
+
+        .nav_card_inner {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 25px;
+            margin: 15px;
+            border-radius: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: 0.4s;
+        }
+
+        .nav_card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav_card:hover .nav_card_inner {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .faq_block {
+            margin-top: 60px;
+            margin-bottom: 100px;
+            border-top: 1px solid #eee;
+            padding-top: 40px;
+        }
+
+        .faq_item {
+            border-bottom: 1px solid #eee;
+            overflow: hidden;
+        }
+
+        .faq_head {
+            padding: 25px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .faq_body {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.4s ease;
+        }
+
+        .faq_item.active .faq_body {
+            grid-template-rows: 1fr;
+        }
+
+        .faq_inner {
+            overflow: hidden;
+        }
+
+        .faq_a {
+            padding-bottom: 25px;
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .promo_slide .promo_text {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: 0.8s;
+        }
+
+        .swiper-slide-active .promo_text {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .promo_slide .promo_img {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: 1s;
+        }
+
+        .swiper-slide-active .promo_img {
+            opacity: 1;
+            transform: scale(1);
+        }
+    </style>
+
+    <div class="home_wrap">
+        <h1 class="home_title">Лучшие цветы в Оренбурге</h1>
+
+        <div class="swiper promo_slider">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide promo_slide" style="background: #FFF0F0;">
+                    <div class="promo_text">
+                        <span
+                            style="color: #ff4d4d; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 10px;">Новинки
+                            сезона</span>
+                        <h2>Самые свежие!!</h2>
+                        <p>Мы продаем только свежие цветы, каждые 3 дня мы обновляем ассортимент лучшими цветами нашей
+                            области.</p>
+                    </div>
+                    <img src="https://psv4.userapi.com/s/v1/d2/Ow_V5nI31Xw0lGLn4hCR3C_lFzNpm-EwlW16OsGJCzQA4fnufa0pa6iakwmHLsvnUPoSWFzlNCBKyaxJ8D2kxlyw5ABXFRrQ7boYf1qj8mnWUoLlW9XPFBO3QajYtMvr2stBIgN94Crj/Group_1_9.png"
+                        class="promo_img">
+                </div>
+                <div class="swiper-slide promo_slide" style="background: #F4F0FF;">
+                    <div class="promo_text">
+                        <span
+                            style="color: #8E7AB5; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 10px;">Эксклюзив</span>
+                        <h2>Успей купить!!</h2>
+                        <p>Скидки 15% на все цветы в коробке с 01.04 по 03.04.</p>
+                    </div>
+                    <img src="https://sun9-9.userapi.com/s/v1/ig2/mxtzHbBcIpEA-L73C47Rv6cZR5bJwOpeOVmRbG5M9wdxELfGeF2RX_YhSJET3qsL409E-4-aErYKzUZ9JjE_wahC.jpg?quality=95&as=32x29,48x44,72x66,108x99,160x146,240x219,360x328,480x438,540x493,640x584,720x657,844x770&from=bu&cs=844x0"
+                        class="promo_img">
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+
+        <div class="cat_grid">
+            <% const cats=[ {n: 'Все товары' ,
+                i: 'https://psv4.userapi.com/s/v1/d2/F9w0vJ7wLc_aPo9w_bSKlDueVRfddv0OnWqONpU1T0ayncnAD7DKb3OfAvbdLkjgczQ-pk7mn7bF9ElcmNy-F6ps3kqj_StPw26b5tYgQtQ0NKbCVmPpntLBLj_DAY1Es3IuCQ8rvZ04/Group_1_5.png'
+                }, {n: 'Монобукеты' ,
+                i: 'https://sun9-73.userapi.com/s/v1/ig2/hd3th0vQ7GqX9CPFydM9c20yb54aBYm5wXfZgfFiQMr_goBrz7zx7to__zrTuw0bnqfIuXdrLOP4hybesxY0Hrp2.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1000x1000&from=bu&cs=1000x0'
+                }, {n: 'Авторские букеты' ,
+                i: 'https://sun9-47.userapi.com/s/v1/ig2/kUD4lgFpa7lZbakYv2n0zT5hIu88lu9Vh6fASkzv47a4jO2OU2XLys1jL7pVNACSs5LC5d69M5jXqd7mxmicvVhE.jpg?quality=95&as=32x26,48x39,72x59,108x89,160x132,240x197,360x296,480x395,540x444,640x526,720x592,1000x822&from=bu&u=Tpp_69e20kdV7ZEF5go3WNCntgIN2UwMwaW5a_iDRuY&cs=1000x0'
+                }, {n: 'Цветы в коробке' ,
+                i: 'https://psv4.userapi.com/s/v1/d2/U6KEJehjlweJwLyLIwW3o2w_gRlJvrwlwDPxJd10P0wHwr7Kvg4S1sA_nEgnF3yXkW5nvHgn33YIGM6pcB7--hpMt507hOm29SqmvKpE8arPr3qpPIAmrbNCIqP8mkc259_PoXfcTJqT/Group_1_1.png'
+                }, {n: 'Цветы в корзине' ,
+                i: 'https://sun9-8.userapi.com/s/v1/ig2/IA0sGvl9fpGoqG27cNbvhsocpcBLeLyo9liEQkLaqWIsFju4QkgpFGldaHdTOgwrSM6gLKwTU81aXrXqmF3B6H8R.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1000x1000&from=bu&cs=1000x0'
+                }, {n: 'Цветы поштучно' ,
+                i: 'https://psv4.userapi.com/s/v1/d2/dxjBynuiBj0SGYatrDdVgWRcw0-aJlJpLKrL9nnsgb8AtzrrBmxnNd_tYqoa28fBpZAha3cLBZYA2mpFkzYYh0HZYexNvsrS_Qtx0y2-vtQrjVWNXq_zvbg8DYeNzWUhSxkj1oFVXyh5/Group_1_6.png'
+                } ]; %>
+                <% cats.forEach(c=> { %>
+                    <a href="/catalog?category=<%= c.n %>" class="cat_tile">
+                        <p>
+                            <%= c.n %>
+                        </p>
+                        <img src="<%= c.i %>" class="tile_img">
+                    </a>
+                    <% }) %>
+        </div>
+
+        <h2 style="font-size: 32px; margin-bottom: 25px;">Разделы</h2>
+
+        <div class="nav_cards">
+            <a href="/catalog" class="nav_card">
+                <div class="nav_card_inner">
+                    <h3>В каталог</h3>
+                    <div style="font-size: 20px;">➔</div>
+                </div>
+            </a>
+            <a href="/about" class="nav_card">
+                <div class="nav_card_inner">
+                    <h3>О нас</h3>
+                    <div style="font-size: 20px;">➔</div>
+                </div>
+            </a>
+            <a href="/reviews" class="nav_card">
+                <div class="nav_card_inner">
+                    <h3>Отзывы</h3>
+                    <div style="font-size: 20px;">➔</div>
+                </div>
+            </a>
+            <a href="/contacts" class="nav_card">
+                <div class="nav_card_inner">
+                    <h3>Контакты</h3>
+                    <div style="font-size: 20px;">➔</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="faq_block">
+            <h2 style="font-size: 32px; margin-bottom: 30px;">Ответы на частые вопросы</h2>
+            <% const faqs=[ {q: "Откуда вы привозите цветы в Оренбург?" ,
+                a: "Мы работаем с лучшими плантациями Оренбургской области." },
+                {q: "Как я могу быть уверен в свежести букета?" ,
+                a: "Наши флористы ежедневно проводят ревизию холодильной камеры. Также поставка цветов производится каждые 3 дня."
+                }, {q: "Можно ли добавить открытку к букету?" , a: "Да, конечно!" },
+                {q: "Как долго простоят ваши цветы?" ,
+                a: "При правильном уходе наши букеты сохраняют свежесть от 5 до 12 дней." } ]; %>
+                <% faqs.forEach(item=> { %>
+                    <div class="faq_item">
+                        <div class="faq_head" onclick="this.parentElement.classList.toggle('active')">
+                            <div class="faq_q">
+                                <%= item.q %>
+                            </div>
+                            <div style="color: #ccc;">⌄</div>
+                        </div>
+                        <div class="faq_body">
+                            <div class="faq_inner">
+                                <div class="faq_a">
+                                    <%= item.a %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        new Swiper('.promo_slider', {
+            loop: true,
+            autoplay: { delay: 5000 },
+            pagination: { el: '.swiper-pagination', clickable: true },
+            speed: 1000,
+        });
+    </script>
+    <%- include('partials/footer') %>

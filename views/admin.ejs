@@ -1,0 +1,345 @@
+<%- include('partials/header') %>
+    <style>
+        .admin_page {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 40px;
+        }
+
+        .side_panel {
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #eee;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .field_row {
+            margin-bottom: 15px;
+        }
+
+        .field_row label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .field_row input,
+        .field_row select,
+        .field_row textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .btn_save {
+            width: 100%;
+            padding: 12px;
+            background: #ff4d4d;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn_cancel {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .list_panel {
+            background: #fff;
+            border-radius: 15px;
+            border: 1px solid #eee;
+            overflow: hidden;
+        }
+
+        .product_table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .product_table th {
+            background: #f9f9f9;
+            padding: 15px;
+            text-align: left;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .product_table td {
+            padding: 15px;
+            border-bottom: 1px solid #f2f2f2;
+            font-size: 14px;
+        }
+
+        .row_links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .link_edit {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .link_del {
+            color: #dc2626;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .flash_msg {
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+
+        .flash_msg.ok {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+
+        .flash_msg.err {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .cat_gap {
+            border: 0;
+            border-top: 1px solid #eee;
+            margin: 22px 0 18px;
+        }
+
+        .cat_heading {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .cat_tip {
+            font-size: 12px;
+            color: #888;
+            margin-top: 6px;
+        }
+
+        .cat_list_title {
+            margin-top: 14px;
+            font-size: 12px;
+            color: #666;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .cat_list_title strong {
+            color: #333;
+        }
+
+        .cat_rows {
+            margin-top: 14px;
+            border: 1px solid #f0f0f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .cat_row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 14px;
+        }
+
+        .cat_row:last-child {
+            border-bottom: 0;
+        }
+
+        .cat_tag {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .cat_remove {
+            font-size: 12px;
+            font-weight: 600;
+            color: #dc2626;
+            text-decoration: none;
+        }
+
+        .cat_remove:hover {
+            text-decoration: underline;
+        }
+
+        .stock_select {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #fff;
+            color: #222;
+        }
+    </style>
+
+    <div class="admin_page">
+        <div style="grid-column: 1 / -1; margin-bottom: 8px; font-size: 14px;">
+            <a href="/admin" style="color:#1a1a1a;font-weight:600;">Товары</a>
+            <span style="color:#ccc;margin:0 10px;">|</span>
+            <a href="/admin/orders" style="color:#2563eb;font-weight:600;">Индивидуальные заказы</a>
+        </div>
+        <div class="side_panel">
+            <% const defaultSet=new Set(defaultCategoryNames || []); %>
+                <% if (catMsg==='created' ) { %>
+                    <div class="flash_msg ok">Категория успешно добавлена.</div>
+                    <% } %>
+                        <% if (catMsg==='deleted' ) { %>
+                            <div class="flash_msg ok">Категория удалена.</div>
+                            <% } %>
+                                <% if (catErr==='empty' ) { %>
+                        <div class="flash_msg err">Укажите название категории.</div>
+                        <% } %>
+                            <% if (catErr==='duplicate' ) { %>
+                                <div class="flash_msg err">Категория с таким названием уже существует.</div>
+                                <% } %>
+                                    <% if (catErr==='fail' ) { %>
+                                        <div class="flash_msg err">Операция с категорией не удалась. Попробуйте ещё
+                                            раз.</div>
+                                        <% } %>
+                                            <% if (catErr==='nocat' ) { %>
+                                                <div class="flash_msg err">Категория не найдена.</div>
+                                                <% } %>
+                                                    <% if (catErr==='protected' ) { %>
+                                                        <div class="flash_msg err">Базовые категории удалять нельзя.
+                                                        </div>
+                                                        <% } %>
+                                                            <% if (catErr==='inUse' ) { %>
+                                                                <div class="flash_msg err">Нельзя удалить: в этой
+                                                                    категории есть товары. Сначала перенесите или
+                                                                    удалите их.</div>
+                                                                <% } %>
+                                            <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 20px;">
+                                                <%= editProduct ? 'Редактировать товар' : 'Добавить товар' %>
+                                            </h2>
+                                            <form
+                                                action="<%= editProduct ? '/admin/edit/' + editProduct._id : '/admin/add' %>"
+                                                method="POST">
+                <div class="field_row">
+                    <label>Название букета</label>
+                    <input type="text" name="name" value="<%= editProduct ? editProduct.name : '' %>" required>
+                </div>
+                <div class="field_row">
+                    <label>Цена (₽)</label>
+                    <input type="number" name="price" value="<%= editProduct ? editProduct.price : '' %>" required>
+                </div>
+                <div class="field_row">
+                    <label>Категория</label>
+                    <select name="category">
+                        <% (categories || []).forEach(c=> { %>
+                            <option value="<%= c.name %>" <%=editProduct && editProduct.category===c.name ? 'selected'
+                                : '' %>><%= c.name %>
+                            </option>
+                            <% }) %>
+                    </select>
+                </div>
+                <div class="field_row">
+                    <label>Ссылка на фото</label>
+                    <input type="text" name="image" value="<%= editProduct ? editProduct.image : '' %>" required>
+                </div>
+                <button type="submit" class="btn_save">
+                    <%= editProduct ? 'Сохранить изменения' : 'Опубликовать' %>
+                </button>
+                <% if (editProduct) { %>
+                    <a href="/admin" class="btn_cancel">Отменить редактирование</a>
+                    <% } %>
+            </form>
+
+            <hr class="cat_gap">
+            <p class="cat_heading">Новая категория букетов</p>
+            <form action="/admin/category" method="POST">
+                <div class="field_row">
+                    <label>Название</label>
+                    <input type="text" name="name" placeholder="Например, Свадебные букеты" required maxlength="120">
+                    <p class="cat_tip">Категория появится в фильтре каталога и в списке при добавлении товара.
+                        Карточки на главной странице не меняются.</p>
+                </div>
+                <button type="submit" class="btn_save" style="background: #1a1a1a;">Добавить категорию</button>
+            </form>
+            <% if (categories && categories.length) { %>
+                <p class="cat_list_title" style="max-height: none; margin-bottom: 8px;"><strong>Категории в
+                        каталоге</strong></p>
+                <div class="cat_rows">
+                    <% categories.forEach(c=> { %>
+                        <div class="cat_row">
+                            <span>
+                                <%= c.name %>
+                            </span>
+                            <% if (defaultSet.has(c.name)) { %>
+                                <span class="cat_tag">базовая</span>
+                                <% } else { %>
+                                    <a href="/admin/category/delete/<%= c._id %>" class="cat_remove"
+                                        onclick="return confirm('Удалить эту категорию? Сначала уберите из неё все товары.')">Удалить</a>
+                                    <% } %>
+                        </div>
+                        <% }) %>
+                </div>
+                <% } %>
+        </div>
+
+        <div class="list_panel">
+            <table class="product_table">
+                <thead>
+                    <tr>
+                        <th>Фото</th>
+                        <th>Название</th>
+                        <th>Цена</th>
+                        <th>Категория</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% products.reverse().forEach(p=> { %>
+                        <tr>
+                            <td><img src="<%= p.image %>"
+                                    style="width: 40px; height: 40px; object-fit: cover; border-radius: 5px;"></td>
+                            <td style="font-weight: 600;">
+                                <%= p.name %>
+                            </td>
+                            <td>
+                                <%= p.price %> ₽
+                            </td>
+                            <td><span
+                                    style="background: #f0fdf4; color: #166534; padding: 2px 8px; border-radius: 20px; font-size: 11px;">
+                                    <%= p.category %>
+                                </span></td>
+                            <td class="row_links">
+                                <form action="/admin/stock/<%= p._id %>" method="POST" style="display:inline;">
+                                    <select name="inStock" class="stock_select" onchange="this.form.submit()">
+                                        <option value="true" <%= p.inStock===false ? '' : 'selected' %>>В наличии</option>
+                                        <option value="false" <%= p.inStock===false ? 'selected' : '' %>>Нет в наличии</option>
+                                    </select>
+                                </form>
+                                <a href="/admin?edit=<%= p._id %>" class="link_edit">Изменить</a>
+                                <a href="/admin/delete/<%= p._id %>" class="link_del"
+                                    onclick="return confirm('Удалить этот товар?')">Удалить</a>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>

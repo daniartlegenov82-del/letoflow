@@ -1,0 +1,240 @@
+<%- include('partials/header') %>
+    <style>
+        .reserve_wrap {
+            max-width: 1000px;
+            margin: 44px auto 80px;
+            padding: 0 20px;
+            min-height: calc(100vh - 340px);
+        }
+
+        .reserve_wrap h1 {
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        .reserve_note {
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .reserve_info {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin-bottom: 22px;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .reserve_info strong {
+            color: #1a1a1a;
+        }
+
+        .reserve_layout {
+            display: grid;
+            grid-template-columns: 330px 1fr;
+            gap: 24px;
+        }
+
+        .reserve_card,
+        .reserve_form {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .reserve_card img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .reserve_card_name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .reserve_card_price {
+            font-size: 22px;
+            color: #1a1a1a;
+        }
+
+        .field_row {
+            margin-bottom: 14px;
+        }
+
+        .field_row label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .field_row input {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 11px 12px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .field_row input:focus {
+            border-color: #ff4d4d;
+        }
+
+        .reserve_btn {
+            width: 100%;
+            border: 0;
+            border-radius: 12px;
+            background: #ff4d4d;
+            color: #fff;
+            padding: 14px 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .reserve_err {
+            background: #fef2f2;
+            color: #991b1b;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+        }
+
+        .thanks_overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .thanks_box {
+            width: 100%;
+            max-width: 560px;
+            background: #fff;
+            border-radius: 20px;
+            padding: 26px 24px;
+            box-shadow: 0 22px 80px rgba(0, 0, 0, 0.2);
+        }
+
+        .thanks_box h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .thanks_box p {
+            margin: 0 0 10px;
+            line-height: 1.55;
+            color: #444;
+        }
+
+        .thanks_line {
+            background: #f9fafb;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin: 10px 0;
+        }
+
+        .thanks_btn {
+            margin-top: 12px;
+            display: inline-block;
+            background: #1a1a1a;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 860px) {
+            .reserve_layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <div class="reserve_wrap">
+        <h1>Бронирование цветов</h1>
+        <p class="reserve_note">Заполните форму, и мы подготовим букет к вашему визиту в магазин.</p>
+
+        <div class="reserve_info">
+            <strong>Как работает бронирование:</strong> мы фиксируем букет за вами до указанного времени. Если планы
+            изменились, просто позвоните в магазин заранее. Адрес: г. Оренбург, ул. Правды, 10А.
+        </div>
+
+        <% if (product) { %>
+            <% if (error==='validation' ) { %>
+                <div class="reserve_err">Заполните все поля формы.</div>
+                <% } %>
+
+                    <div class="reserve_layout">
+                        <div class="reserve_card">
+                            <img src="<%= product.image %>" alt="">
+                            <div class="reserve_card_name">
+                                <%= product.name %>
+                            </div>
+                            <div class="reserve_card_price">
+                                <%= product.price %> ₽
+                            </div>
+                        </div>
+                        <form class="reserve_form" action="/bouquet-reservation" method="POST">
+                            <div class="field_row">
+                                <label for="lastName">Фамилия</label>
+                                <input id="lastName" name="lastName" type="text" maxlength="120" required
+                                    value="<%= values.lastName || '' %>">
+                            </div>
+                            <div class="field_row">
+                                <label for="firstName">Имя</label>
+                                <input id="firstName" name="firstName" type="text" maxlength="120" required
+                                    value="<%= values.firstName || '' %>">
+                            </div>
+                            <div class="field_row">
+                                <label for="phone">Номер телефона</label>
+                                <input id="phone" name="phone" type="tel" maxlength="40" required
+                                    value="<%= values.phone || '' %>">
+                            </div>
+                            <div class="field_row">
+                                <label for="pickupDate">Дата визита</label>
+                                <input id="pickupDate" name="pickupDate" type="date" required
+                                    value="<%= values.pickupDate || '' %>">
+                            </div>
+                            <div class="field_row">
+                                <label for="pickupTime">Примерное время визита</label>
+                                <input id="pickupTime" name="pickupTime" type="time" required
+                                    value="<%= values.pickupTime || '' %>">
+                            </div>
+                            <button type="submit" class="reserve_btn">Подтвердить бронирование</button>
+                        </form>
+                    </div>
+                    <% } %>
+    </div>
+
+    <% if (success && reservation) { %>
+        <div class="thanks_overlay" id="thanks_overlay">
+            <div class="thanks_box">
+                <h2>Будем ждать вас!</h2>
+                <p>Спасибо за бронирование. Мы отложили выбранные цветы для вас.</p>
+                <div class="thanks_line"><strong>Букет:</strong> <%= reservation.productName %></div>
+                <div class="thanks_line"><strong>Дата и время:</strong> <%= reservation.pickupAt %></div>
+                <a href="/catalog" class="thanks_btn">Вернуться в каталог</a>
+            </div>
+        </div>
+        <% } %>
+
+    <%- include('partials/footer') %>

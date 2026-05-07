@@ -1,0 +1,163 @@
+<%- include('partials/header') %>
+    <style>
+        .contact_page {
+            max-width: 1200px;
+            margin: 44px auto 68px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: minmax(310px, 430px) minmax(520px, 1fr);
+            gap: 54px;
+            align-items: start;
+        }
+
+        .contact_info h1 {
+            font-size: 52px;
+            line-height: 1.05;
+            letter-spacing: -0.6px;
+            margin-bottom: 46px;
+        }
+
+        .contact_block {
+            margin-bottom: 28px;
+        }
+
+        .contact_block h4 {
+            font-size: 11px;
+            line-height: 1.4;
+            color: #b5b5b5;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .contact_block p,
+        .contact_block a {
+            margin: 0;
+            font-size: 25px;
+            line-height: 1.22;
+            color: #1a1a1a;
+            text-decoration: none;
+            display: block;
+            transition: color 0.2s ease;
+        }
+
+        .contact_block a:hover {
+            color: #ff4d4d;
+        }
+
+        .contact_note {
+            margin-top: 38px;
+            max-width: 500px;
+            font-size: 15px;
+            line-height: 1.5;
+            color: #b4b4b4;
+        }
+
+        .map_wrap {
+            width: 100%;
+            height: 612px;
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid #efefef;
+            box-shadow: 0 14px 42px rgba(0, 0, 0, 0.07);
+        }
+
+        .map_wrap a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .map_wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        @media (max-width: 1024px) {
+            .contact_page {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .contact_info h1 {
+                font-size: 44px;
+                margin-bottom: 32px;
+            }
+
+            .contact_block p,
+            .contact_block a {
+                font-size: 28px;
+            }
+
+            .map_wrap {
+                height: 420px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .contact_page {
+                margin-top: 30px;
+                margin-bottom: 44px;
+            }
+
+            .contact_info h1 {
+                font-size: 36px;
+            }
+
+            .contact_block p,
+            .contact_block a {
+                font-size: 24px;
+            }
+
+            .map_wrap {
+                height: 340px;
+                border-radius: 20px;
+            }
+        }
+    </style>
+
+    <div class="contact_page">
+        <div class="contact_info">
+            <h1>Контакты</h1>
+
+            <div class="contact_block">
+                <h4>Адрес магазина</h4>
+                <p>г. Оренбург, ул. Правды, 10А</p>
+            </div>
+
+            <div class="contact_block">
+                <h4>Телефон</h4>
+                <a href="tel:+79226258775">+7 (922) 625-87-75</a>
+            </div>
+
+            <div class="contact_block">
+                <h4>Электронная почта</h4>
+                <a href="mailto:LetoFlowers56@mail.ru">LetoFlowers56@mail.ru</a>
+            </div>
+
+            <div class="contact_block">
+                <h4>Режим работы</h4>
+                <p>Круглосуточно</p>
+            </div>
+
+            <div class="contact_note">
+                <p>
+                    Мы находимся на пересечении ул. Правды и Пролетарской.
+                    На карте отмечено точное местоположение Leto flowers.
+                </p>
+            </div>
+        </div>
+
+        <div class="map_wrap">
+            <a href="https://yandex.ru/maps/org/leto_flowers/233481232810/" target="_blank"
+                title="Открыть в Яндекс Картах">
+                <img src="https://sun9-33.vkuserphoto.ru/s/v1/ig2/WeroUxfj0oUtGMJhG8hXSRsUVopNagXU1qO3dZey11OAnURh_HrbL2rFOuH0qwROgXofjHaW-ZNo4VhFe0nyOCNM.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu&u=BO-x33-7mScWL8iRWgtWC7-LDAgrd3Km2d_52UEGVnc&cs=1920x0"
+                    alt="Карта Leto Flowers">
+            </a>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

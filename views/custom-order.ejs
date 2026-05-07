@@ -1,0 +1,597 @@
+<%- include('partials/header') %>
+    <style>
+        .order_wrap {
+            max-width: 900px;
+            margin: 48px auto 80px;
+            padding: 0 20px;
+        }
+
+        .order_wrap h1 {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .order_lead {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .err_msg {
+            background: #fef2f2;
+            color: #991b1b;
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            font-size: 15px;
+        }
+
+        .order_form {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 20px;
+            padding: 28px 28px 32px;
+        }
+
+        .form_block {
+            margin-bottom: 28px;
+        }
+
+        .form_block h2 {
+            font-size: 18px;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .form_row {
+            margin-bottom: 14px;
+        }
+
+        .form_row label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .form_row input[type="text"],
+        .form_row input[type="email"],
+        .form_row input[type="tel"],
+        .form_row input[type="number"],
+        .form_row textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .form_row input:focus,
+        .form_row textarea:focus {
+            border-color: #ff4d4d;
+        }
+
+        .form_row textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .stem_list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .stem_line {
+            display: grid;
+            grid-template-columns: 56px 1fr auto;
+            gap: 14px;
+            align-items: center;
+            padding: 12px;
+            background: #fafafa;
+            border-radius: 12px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .stem_line.out_of_stock {
+            opacity: 0.6;
+            background: #f5f5f5;
+        }
+
+        .stem_line img {
+            width: 56px;
+            height: 56px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .stem_meta {
+            min-width: 0;
+        }
+
+        .stem_title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .stem_cost {
+            font-size: 13px;
+            color: #888;
+        }
+
+        .stem_stock_badge {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            background: #6b7280;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .stem_line input[type="number"] {
+            width: 72px;
+            text-align: center;
+        }
+
+        .stems_hint {
+            color: #888;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .pick_list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .pick_list label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .pick_list input[type="radio"],
+        .pick_list input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #ff4d4d;
+        }
+
+        .price_block {
+            margin-top: 8px;
+            padding: 20px 22px;
+            background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+            border: 1px solid #ffe0e0;
+            border-radius: 16px;
+        }
+
+        .price_block strong {
+            font-size: 15px;
+            color: #444;
+        }
+
+        .price_block .price_big {
+            font-size: 28px;
+            color: #ff4d4d;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .price_block .price_hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+        }
+
+        .btn_send {
+            width: 100%;
+            margin-top: 24px;
+            padding: 16px;
+            background: #ff4d4d;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn_send:hover {
+            filter: brightness(1.05);
+        }
+
+        .btn_send:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .order_popup {
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .order_popup.open {
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        .order_popup_dim {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .order_popup.open .order_popup_dim {
+            opacity: 1;
+        }
+
+        .order_popup_fit {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .order_popup_box {
+            position: relative;
+            background: #fff;
+            max-width: 520px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 22px;
+            padding: 28px 26px 24px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.18);
+            transform: translateY(24px) scale(0.96);
+            opacity: 0;
+            transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.38s ease;
+        }
+
+        .order_popup.open .order_popup_box {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .order_popup_box h3 {
+            font-size: 22px;
+            margin-bottom: 14px;
+            color: #1a1a1a;
+        }
+
+        .order_popup_box p {
+            font-size: 15px;
+            line-height: 1.55;
+            color: #444;
+            margin-bottom: 12px;
+        }
+
+        .order_code_big {
+            display: inline-block;
+            margin-top: 4px;
+            font-size: 26px;
+            font-weight: 800;
+            color: #ff4d4d;
+            letter-spacing: 0.5px;
+            font-family: ui-monospace, 'Cascadia Code', monospace;
+        }
+
+        .order_shop_addr {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid #eee;
+            font-size: 14px !important;
+        }
+
+        .order_popup_box .btn_send {
+            margin-top: 18px;
+        }
+
+        @media (max-width: 600px) {
+            .stem_line {
+                grid-template-columns: 48px 1fr;
+                grid-template-rows: auto auto;
+            }
+
+            .stem_line input[type="number"] {
+                grid-column: 1 / -1;
+                width: 100%;
+            }
+        }
+    </style>
+
+    <div class="order_wrap">
+        <h1>Индивидуальный букет</h1>
+        <p class="order_lead">Соберите состав из цветов поштучно, выберите оформление и опишите желаемый букет. После
+            оформления вы получите уникальный код заказа. Ниже — примерная стоимость по прайсу и фиксированным доплатам
+            за оформление.</p>
+
+        <% if (error==='validation' ) { %>
+            <div class="err_msg">Заполните ФИО, телефон и корректный email.</div>
+            <% } %>
+                <% if (error==='no_flowers' ) { %>
+                    <div class="err_msg">Укажите хотя бы один цветок (количество больше нуля).</div>
+                    <% } %>
+                        <% if (error==='server' ) { %>
+                            <div class="err_msg">Не удалось отправить заявку. Попробуйте позже.</div>
+                            <% } %>
+                                <div id="ajax_err" class="err_msg" style="display:none;margin-bottom:16px;"></div>
+
+                                <form class="order_form" action="/custom-order" method="POST" id="order_form">
+                                            <div class="form_block">
+                                                <h2>Ваши данные</h2>
+                                                <div class="form_row">
+                                                    <label for="fullName">ФИО</label>
+                                                    <input type="text" id="fullName" name="fullName" required
+                                                        maxlength="200" value="<%= values.fullName || '' %>">
+                                                </div>
+                                                <div class="form_row">
+                                                    <label for="phone">Телефон</label>
+                                                    <input type="tel" id="phone" name="phone" required maxlength="40"
+                                                        placeholder="+7 …" value="<%= values.phone || '' %>">
+                                                </div>
+                                                <div class="form_row">
+                                                    <label for="email">Электронная почта</label>
+                                                    <input type="email" id="email" name="email" required
+                                                        maxlength="120" value="<%= values.email || '' %>">
+                                                </div>
+                                            </div>
+
+                                            <div class="form_block">
+                                                <h2>Цветы (категория «Цветы поштучно»)</h2>
+                                                <% if (!stemProducts || stemProducts.length===0) { %>
+                                                    <p class="stems_hint">Пока нет позиций в этой категории. Загляните
+                                                        позже или выберите готовые букеты в <a href="/catalog"
+                                                            style="color:#ff4d4d;">каталоге</a>.</p>
+                                                    <% } else { %>
+                                                        <div class="stem_list">
+                                                            <% stemProducts.forEach(p=> { %>
+                                                                <div class="stem_line <%= p.inStock === false ? 'out_of_stock' : '' %>" data-stem
+                                                                    data-price="<%= Number(p.price) %>">
+                                                                    <img src="<%= p.image %>" alt="">
+                                                                    <div class="stem_meta">
+                                                                        <div class="stem_title">
+                                                                            <%= p.name %>
+                                                                        </div>
+                                                                        <div class="stem_cost">
+                                                                            <%= p.price %> ₽ за шт.
+                                                                        </div>
+                                                                        <% if (p.inStock===false) { %>
+                                                                            <div class="stem_stock_badge">Нет в наличии</div>
+                                                                            <% } %>
+                                                                    </div>
+                                                                    <input type="number" name="qty_<%= p._id %>"
+                                                                        min="0" max="999" class="stem_qty"
+                                                                        <%= p.inStock === false ? 'disabled' : '' %>
+                                                                        aria-label="Количество: <%= p.name %>"
+                                                                        value="<%= (values.stemQty && values.stemQty[String(p._id)] != null) ? values.stemQty[String(p._id)] : 0 %>">
+                                                                </div>
+                                                                <% }) %>
+                                                        </div>
+                                                        <% } %>
+                                            </div>
+
+                                            <div class="form_block">
+                                                <h2>Зелень</h2>
+                                                <div class="pick_list">
+                                                    <label>
+                                                        <input type="checkbox" name="greenery" value="1"
+                                                            id="add_greenery" <%= (values && values.greenery) ? 'checked' : '' %>>
+                                                        Добавить зелень в букет (+
+                                                        <%= orderConfig.greeneryFee %> ₽)
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form_block">
+                                                <h2>Оформление</h2>
+                                                <div class="pick_list">
+                                                    <% orderConfig.wrapOptions.forEach((opt, i)=> { %>
+                                                        <label>
+                                                            <input type="radio" name="wrapping" value="<%= opt.value %>"
+                                                                <%= ((values && values.wrapping === opt.value) || ((!values || !values.wrapping) && i === 0)) ? 'checked' : '' %>>
+                                                            <%= opt.label %>
+                                                                <% if (opt.fee> 0) { %>
+                                                                    <span style="color:#888;">(+<%= opt.fee %> ₽)</span>
+                                                                    <% } %>
+                                                        </label>
+                                                        <% }) %>
+                                                </div>
+                                            </div>
+
+                                            <div class="form_block">
+                                                <h2>Комментарий к букету</h2>
+                                                <div class="form_row">
+                                                    <label for="comment">Опишите, какой букет вы хотите</label>
+                                                    <textarea id="comment" name="comment" maxlength="2000"
+                                                        placeholder="Цветовая гамма, стиль, повод…"><%= values.comment || '' %></textarea>
+                                                </div>
+                                            </div>
+
+                                            <div class="price_block">
+                                                <strong>Примерная стоимость</strong>
+                                                <div class="price_big" id="total_price">0 ₽</div>
+                                                <p class="price_hint">Сумма цветов по прайсу, доплата за зелень и выбранный
+                                                    тип оформления. Итоговая цена может немного измениться при сборке.</p>
+                                            </div>
+
+                                            <button type="submit" class="btn_send" id="btn_send">Сделать заказ
+                                            </button>
+                                </form>
+
+        <div id="order_popup" class="order_popup" aria-hidden="true">
+            <div class="order_popup_dim" id="popup_dim" tabindex="-1"></div>
+            <div class="order_popup_fit">
+                <div class="order_popup_box" role="dialog" aria-labelledby="popup_title">
+                    <h3 id="popup_title">Спасибо за заказ!</h3>
+                    <p>Мы приняли вашу заявку на индивидуальный букет.</p>
+                    <p>Примерная стоимость: <strong id="popup_price"></strong></p>
+                    <p>Ваш уникальный код заказа:<br><span id="popup_code" class="order_code_big"></span></p>
+                    <p><strong>Сделайте скриншот</strong> этого окна и предъявите его на кассе при
+                        получении заказа.</p>
+                    <p>В течение <strong>трёх дней</strong> заказ будет собран; забрать его можно в нашем магазине.</p>
+                    <p><strong>Личный кабинет и статус заказа.</strong> Отслеживать статус заказа можно в <a
+                            href="/account" style="color:#ff4d4d;font-weight:600;">личном кабинете</a>: войдите в аккаунт
+                        (иконка в правом верхнем углу шапки) и откройте пункт «Личный кабинет» — там отображаются ваши
+                        заказы. Когда статус заказа станет «Готов к выдаче»,
+                        приходите в магазин со скриншотом этого окна — кассир найдёт букет по номеру.
+                        Если вы оформили заказ без входа в аккаунт, заказ в кабинете не отобразится, но выдача по коду
+                        на кассе возможна.</p>
+                    <p>Оплата производится <strong>на месте при получении</strong> букета.</p>
+                    <p class="order_shop_addr"><strong>Адрес магазина:</strong> г. Оренбург, ул. Правды, 10А</p>
+                    <button type="button" class="btn_send" id="popup_ok" style="background:#1a1a1a;">Понятно
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <% if (orderFlash) { %>
+        <script>window.__ORDER_FLASH = <%- JSON.stringify(orderFlash) %>;</script>
+        <% } %>
+
+            <script>
+                (function () {
+                    var out = document.getElementById('total_price');
+                    var greeneryFee = <%= orderConfig.greeneryFee %>;
+                    var wrapFees = <%- JSON.stringify(orderConfig.wrapFees) %>;
+                    var rows = document.querySelectorAll('[data-stem]');
+                    var greenery = document.getElementById('add_greenery');
+                    var radios = document.querySelectorAll('input[name="wrapping"]');
+
+                    function wrapFee() {
+                        for (var i = 0; i < radios.length; i++) {
+                            if (radios[i].checked) return wrapFees[radios[i].value] || 0;
+                        }
+                        return 0;
+                    }
+
+                    function flowersTotal() {
+                        var s = 0;
+                        for (var i = 0; i < rows.length; i++) {
+                            var inp = rows[i].querySelector('.stem_qty');
+                            if (!inp) continue;
+                            var n = parseInt(inp.value, 10);
+                            if (isNaN(n) || n < 0) n = 0;
+                            var price = parseFloat(rows[i].getAttribute('data-price'));
+                            if (isNaN(price)) price = 0;
+                            s += n * price;
+                        }
+                        return s;
+                    }
+
+                    function render() {
+                        if (!out) return;
+                        var f = flowersTotal();
+                        var g = greenery && greenery.checked ? greeneryFee : 0;
+                        var w = wrapFee();
+                        var t = Math.round(f + g + w);
+                        out.textContent = t.toLocaleString('ru-RU') + ' ₽';
+                    }
+
+                    for (var i = 0; i < rows.length; i++) {
+                        var q = rows[i].querySelector('.stem_qty');
+                        if (q) q.addEventListener('input', render);
+                    }
+                    if (greenery) greenery.addEventListener('change', render);
+                    for (var j = 0; j < radios.length; j++) radios[j].addEventListener('change', render);
+                    render();
+
+                    var modal = document.getElementById('order_popup');
+                    var backdrop = document.getElementById('popup_dim');
+                    var btnClose = document.getElementById('popup_ok');
+                    var elPrice = document.getElementById('popup_price');
+                    var elCode = document.getElementById('popup_code');
+                    var form = document.getElementById('order_form');
+                    var ajaxErr = document.getElementById('ajax_err');
+                    var submitBtn = document.getElementById('btn_send');
+
+                    function openModal(data) {
+                        if (!modal || !elPrice || !elCode) return;
+                        elPrice.textContent = data.priceText || (data.estimatedPrice != null
+                            ? Number(data.estimatedPrice).toLocaleString('ru-RU') + ' ₽' : '');
+                        elCode.textContent = data.orderCode || '';
+                        modal.classList.add('open');
+                        modal.setAttribute('aria-hidden', 'false');
+                        document.body.style.overflow = 'hidden';
+                    }
+
+                    function closeModal() {
+                        if (!modal) return;
+                        modal.classList.remove('open');
+                        modal.setAttribute('aria-hidden', 'true');
+                        document.body.style.overflow = '';
+                        if (form) form.reset();
+                        render();
+                    }
+
+                    if (btnClose) btnClose.addEventListener('click', closeModal);
+                    if (backdrop) backdrop.addEventListener('click', closeModal);
+
+                    if (form && submitBtn) {
+                        form.addEventListener('submit', function (ev) {
+                            ev.preventDefault();
+                            if (ajaxErr) { ajaxErr.style.display = 'none'; ajaxErr.textContent = ''; }
+                            var params = new URLSearchParams();
+                            new FormData(form).forEach(function (v, k) { params.append(k, v); });
+                            submitBtn.disabled = true;
+                            fetch('/custom-order', {
+                                method: 'POST',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                                },
+                                body: params.toString()
+                            }).then(function (r) {
+                                return r.json().catch(function () { return {}; }).then(function (j) {
+                                    return { ok: r.ok, j: j };
+                                });
+                            }).then(function (res) {
+                                submitBtn.disabled = false;
+                                if (res.ok && res.j && res.j.ok) {
+                                    openModal(res.j);
+                                    return;
+                                }
+                                var msg = 'Не удалось отправить заказ. Попробуйте позже.';
+                                if (res.j && res.j.error === 'validation') msg = 'Заполните ФИО, телефон и корректный email.';
+                                if (res.j && res.j.error === 'no_flowers') msg = 'Укажите хотя бы один цветок (количество больше нуля).';
+                                if (ajaxErr) {
+                                    ajaxErr.textContent = msg;
+                                    ajaxErr.style.display = 'block';
+                                }
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }).catch(function () {
+                                submitBtn.disabled = false;
+                                if (ajaxErr) {
+                                    ajaxErr.textContent = 'Ошибка сети. Проверьте подключение и попробуйте снова.';
+                                    ajaxErr.style.display = 'block';
+                                }
+                            });
+                        });
+                    }
+
+                    if (window.__ORDER_FLASH) {
+                        openModal(window.__ORDER_FLASH);
+                        try { delete window.__ORDER_FLASH; } catch (e) { window.__ORDER_FLASH = null; }
+                    }
+                })();
+            </script>
+
+    <%- include('partials/footer') %>

@@ -1,0 +1,105 @@
+<%- include('partials/header') %>
+    <style>
+        .auth_wrap {
+            max-width: 450px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .auth_box {
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid #eee;
+        }
+
+        .auth_title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form_field {
+            margin-bottom: 20px;
+        }
+
+        .form_field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .form_field input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .btn_auth {
+            width: 100%;
+            padding: 14px;
+            background: #1a1a1a;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .form_error {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .auth_links {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .auth_links a {
+            color: #ff4d4d;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+
+    <div class="auth_wrap">
+        <div class="auth_box">
+            <h1 class="auth_title">Вход в LetoFlowers</h1>
+
+            <% if (error) { %>
+                <div class="form_error">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <form action="/login" method="POST">
+                        <div class="form_field">
+                            <label>Email</label>
+                            <input type="email" name="email" placeholder="example@mail.ru" required>
+                        </div>
+                        <div class="form_field">
+                            <label>Пароль</label>
+                            <input type="password" name="password" placeholder="Введите пароль" required>
+                        </div>
+                        <button type="submit" class="btn_auth">Войти</button>
+                    </form>
+
+                    <div class="auth_links">
+                        Нет аккаунта? <a href="/register">Зарегистрироваться</a>
+                    </div>
+        </div>
+    </div>
+    <%- include('partials/footer') %>

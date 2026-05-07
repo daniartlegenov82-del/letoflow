@@ -1,0 +1,288 @@
+<%- include('partials/header') %>
+    <style>
+        .shop_layout {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 50px;
+        }
+
+        .filters {
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+        }
+
+        .filter_block {
+            margin-bottom: 40px;
+        }
+
+        .filter_title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .cat_links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cat_link {
+            text-decoration: none;
+            color: #666;
+            font-size: 16px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .cat_link:hover {
+            color: #ff4d4d;
+        }
+
+        .cat_link.active {
+            color: #ff4d4d;
+            font-weight: 700;
+        }
+
+        .cat_link.active::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #ff4d4d;
+            border-radius: 50%;
+        }
+
+        .price_row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .price_field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            background: #fff;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .price_field:focus {
+            border-color: #ff4d4d;
+        }
+
+        .btn_apply {
+            width: 100%;
+            padding: 14px;
+            background: #1a1a1a;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn_apply:hover {
+            background: #ff4d4d;
+        }
+
+        .link_reset {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #aaa;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .goods_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .goods_card {
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #f2f2f2;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .goods_card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .goods_card.out_of_stock {
+            opacity: 0.55;
+        }
+
+        .goods_card.out_of_stock:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .stock_mark {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(75, 85, 99, 0.92);
+            color: #fff;
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-weight: 700;
+            z-index: 3;
+        }
+
+        .goods_img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .goods_info {
+            padding: 20px;
+        }
+
+        .goods_cat {
+            font-size: 11px;
+            color: #ff4d4d;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .goods_name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            height: 44px;
+            overflow: hidden;
+        }
+
+        .goods_price {
+            font-size: 20px;
+            font-weight: 400;
+            color: #1a1a1a;
+        }
+
+        .book_btn {
+            margin-top: 14px;
+            width: 100%;
+            padding: 11px 12px;
+            border: 0;
+            border-radius: 10px;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s;
+        }
+
+        .book_btn:hover {
+            background: #ff4d4d;
+        }
+
+        .book_btn:disabled {
+            background: #bdbdbd;
+            cursor: not-allowed;
+        }
+    </style>
+
+    <div class="shop_layout">
+        <aside class="filters">
+            <form action="/catalog" method="GET" id="filterForm">
+                <div class="filter_block">
+                    <span class="filter_title">Категории</span>
+                    <div class="cat_links">
+                        <a href="/catalog"
+                            class="cat_link <%= !query.category || query.category === 'Все товары' ? 'active' : '' %>">Все
+                            товары</a>
+                        <% (categories || []).forEach(c=> { %>
+                            <label class="cat_link <%= query.category === c.name ? 'active' : '' %>">
+                                <input type="radio" name="category" value="<%= c.name %>" style="display: none;"
+                                    onchange="document.getElementById('filterForm').submit()" <%=query.category===c.name
+                                    ? 'checked' : '' %>>
+                                <%= c.name %>
+                            </label>
+                            <% }) %>
+                    </div>
+                </div>
+
+                <div class="filter_block">
+                    <span class="filter_title">Цена, ₽</span>
+                    <div class="price_row">
+                        <input type="number" name="minPrice" placeholder="От" class="price_field"
+                            value="<%= query.minPrice || '' %>">
+                        <div style="color: #ccc;">—</div>
+                        <input type="number" name="maxPrice" placeholder="До" class="price_field"
+                            value="<%= query.maxPrice || '' %>">
+                    </div>
+                    <button type="submit" class="btn_apply">Применить</button>
+                    <a href="/catalog" class="link_reset">Сбросить всё</a>
+                </div>
+            </form>
+        </aside>
+
+        <main>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px;">
+                <h1 style="font-size: 32px;">
+                    <%= query.category || 'Все товары' %>
+                </h1>
+                <span style="color: #999; font-size: 14px;">Найдено: <%= products.length %></span>
+            </div>
+
+            <div class="goods_grid">
+                <% if (products.length===0) { %>
+                    <div style="grid-column: 1/-1; text-align: center; padding: 100px 0; color: #ccc;">
+                        <p style="font-size: 20px;">К сожалению, ничего не найдено 🌸</p>
+                    </div>
+                    <% } %>
+
+                        <% products.forEach(p=> { %>
+                            <div class="goods_card <%= p.inStock === false ? 'out_of_stock' : '' %>">
+                                <% if (p.inStock===false) { %>
+                                    <span class="stock_mark">Нет в наличии</span>
+                                    <% } %>
+                                <img src="<%= p.image %>" class="goods_img">
+                                <div class="goods_info">
+                                    <span class="goods_cat">
+                                        <%= p.category %>
+                                    </span>
+                                    <h3 class="goods_name">
+                                        <%= p.name %>
+                                    </h3>
+                                    <div class="goods_price">
+                                        <%= p.price %> ₽
+                                    </div>
+                                    <form action="/bouquet-reservation/start" method="POST">
+                                        <input type="hidden" name="productId" value="<%= p._id %>">
+                                        <button type="submit" class="book_btn" <%= p.inStock===false ? 'disabled' : '' %>>
+                                            Забронировать
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <% }) %>
+            </div>
+        </main>
+    </div>
+
+    <%- include('partials/footer') %>

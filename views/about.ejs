@@ -1,0 +1,57 @@
+<%- include('partials/header') %>
+    <style>
+        .about_wrap {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 0 20px;
+            line-height: 1.8;
+            color: #444;
+        }
+
+        .about_wrap h1 {
+            font-size: 48px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .about_wrap p {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .stats_row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .stat_cell h3 {
+            font-size: 32px;
+            color: #ff4d4d;
+            margin-bottom: 5px;
+        }
+    </style>
+    <div class="about_wrap">
+        <h1>О LetoFlowers</h1>
+        <p>Мы верим, что цветы — это самый красивый способ выразить чувства. Наша история началась в Оренбурге с
+            маленького уголка в неприметном месте, а сегодня мы приносим сотни улыбок ежедневно.</p>
+        <p>Мы работаем напрямую с лучшими плантациями нашей области, чтобы в ваших вазах стояли только самые свежие и
+            стойкие букеты. Каждый заказ для нас — это ответственность перед вашими близкими.</p>
+        <div class="stats_row">
+            <div class="stat_cell">
+                <h3>10+</h3>
+                <p>лет опыта</p>
+            </div>
+            <div class="stat_cell">
+                <h3>45к+</h3>
+                <p>букетов</p>
+            </div>
+            <div class="stat_cell">
+                <h3>24/7</h3>
+                <p>поддержка</p>
+            </div>
+        </div>
+    </div>
+    <%- include('partials/footer') %>
