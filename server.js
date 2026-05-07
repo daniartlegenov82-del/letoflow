@@ -1,10 +1,159 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const path = require('path');
+const crypto = require('crypto');
 
 const app = express();
+const SESSION_COOKIE_NAME = 'leto_session';
+const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 14;
+const SESSION_SECRET = process.env.SESSION_SECRET || 'replace-this-session-secret';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/letoFlowersDB';
+const IS_PROD = process.env.NODE_ENV === 'production';
+
+let dbConnectPromise = null;
+let defaultCategoriesReady = false;
+
+function toBase64Url(input) {
+    return Buffer.from(input)
+        .toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/g, '');
+}
+
+function fromBase64Url(input) {
+    if (!input || typeof input !== 'string') return null;
+    const normalized = input.replace(/-/g, '+').replace(/_/g, '/');
+    const pad = normalized.length % 4;
+    const padded = normalized + (pad ? '='.repeat(4 - pad) : '');
+    return Buffer.from(padded, 'base64').toString('utf8');
+}
+
+function signSessionPayload(payload) {
+    return toBase64Url(
+        crypto
+            .createHmac('sha256', SESSION_SECRET)
+            .update(payload)
+            .digest()
+    );
+}
+
+function parseCookies(header) {
+    const out = {};
+    if (!header) return out;
+    const pairs = String(header).split(';');
+    for (const p of pairs) {
+        const i = p.indexOf('=');
+        if (i < 0) continue;
+        const key = p.slice(0, i).trim();
+        const value = p.slice(i + 1).trim();
+        out[key] = decodeURIComponent(value);
+    }
+    return out;
+}
+
+function parseSessionCookie(rawCookie) {
+    if (!rawCookie || typeof rawCookie !== 'string') return {};
+    const idx = rawCookie.lastIndexOf('.');
+    if (idx <= 0) return {};
+    const payload = rawCookie.slice(0, idx);
+    const signature = rawCookie.slice(idx + 1);
+    const expected = signSessionPayload(payload);
+    const sigA = Buffer.from(signature);
+    const sigB = Buffer.from(expected);
+    if (sigA.length !== sigB.length) return {};
+    if (!crypto.timingSafeEqual(sigA, sigB)) return {};
+    try {
+        const json = fromBase64Url(payload);
+        const parsed = JSON.parse(json || '{}');
+        if (!parsed || typeof parsed !== 'object') return {};
+        if (parsed.exp && parsed.exp < Date.now()) return {};
+        return parsed.data && typeof parsed.data === 'object' ? parsed.data : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function serializeSessionCookie(sessionData) {
+    const payload = JSON.stringify({
+        exp: Date.now() + SESSION_TTL_MS,
+        data: sessionData
+    });
+    const payloadEncoded = toBase64Url(payload);
+    const signature = signSessionPayload(payloadEncoded);
+    return `${payloadEncoded}.${signature}`;
+}
+
+function appendSetCookie(res, cookieValue) {
+    const existing = res.getHeader('Set-Cookie');
+    if (!existing) {
+        res.setHeader('Set-Cookie', cookieValue);
+        return;
+    }
+    if (Array.isArray(existing)) {
+        res.setHeader('Set-Cookie', existing.concat(cookieValue));
+        return;
+    }
+    res.setHeader('Set-Cookie', [existing, cookieValue]);
+}
+
+function setSessionCookie(res, sessionData) {
+    const common = [
+        `Path=/`,
+        'HttpOnly',
+        `SameSite=Lax`,
+        `Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}`
+    ];
+    if (IS_PROD) common.push('Secure');
+    const value = encodeURIComponent(serializeSessionCookie(sessionData));
+    appendSetCookie(res, `${SESSION_COOKIE_NAME}=${value}; ${common.join('; ')}`);
+}
+
+function clearSessionCookie(res) {
+    const common = ['Path=/', 'HttpOnly', 'SameSite=Lax', 'Max-Age=0'];
+    if (IS_PROD) common.push('Secure');
+    appendSetCookie(res, `${SESSION_COOKIE_NAME}=; ${common.join('; ')}`);
+}
+
+function isSessionEmpty(sessionData) {
+    return !sessionData || Object.keys(sessionData).length === 0;
+}
+
+function clearSessionData(req) {
+    if (!req.session || typeof req.session !== 'object') {
+        req.session = {};
+        return;
+    }
+    for (const key of Object.keys(req.session)) {
+        delete req.session[key];
+    }
+}
+
+async function ensureDatabaseReady() {
+    if (mongoose.connection.readyState === 1) {
+        if (!defaultCategoriesReady) {
+            await ensureDefaultCategories();
+            defaultCategoriesReady = true;
+        }
+        return;
+    }
+    if (!dbConnectPromise) {
+        dbConnectPromise = mongoose
+            .connect(MONGODB_URI)
+            .then(async () => {
+                if (!defaultCategoriesReady) {
+                    await ensureDefaultCategories();
+                    defaultCategoriesReady = true;
+                }
+            })
+            .catch((err) => {
+                dbConnectPromise = null;
+                throw err;
+            });
+    }
+    await dbConnectPromise;
+}
 
 const Product = mongoose.model('Product', {
     name: String,
@@ -181,13 +330,33 @@ function stemQtyFromBody(stemProducts, body) {
 }
 
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
-app.use(session({
-    secret: 'leto-secret-key-123',
-    resave: false,
-    saveUninitialized: false
-}));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(async (req, res, next) => {
+    try {
+        await ensureDatabaseReady();
+        next();
+    } catch (err) {
+        console.error('MongoDB connection error:', err);
+        res.status(500).send('Ошибка подключения к базе данных');
+    }
+});
+app.use((req, res, next) => {
+    const cookies = parseCookies(req.headers.cookie || '');
+    req.session = parseSessionCookie(cookies[SESSION_COOKIE_NAME]);
+
+    const oldEnd = res.end;
+    res.end = function patchedEnd(...args) {
+        if (!res.headersSent) {
+            if (isSessionEmpty(req.session)) clearSessionCookie(res);
+            else setSessionCookie(res, req.session);
+        }
+        return oldEnd.apply(this, args);
+    };
+    next();
+});
 
 app.use((req, res, next) => {
     res.locals.user = req.session.user || null;
@@ -573,7 +742,7 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-    req.session.destroy();
+    clearSessionData(req);
     res.redirect('/');
 });
 
@@ -651,14 +820,18 @@ app.get('/admin/delete/:id', isAdmin, async (req, res) => {
     res.redirect('/admin');
 });
 
-mongoose.connect('mongodb://127.0.0.1:27017/letoFlowersDB')
-    .then(() => ensureDefaultCategories())
-    .then(() => {
-        app.listen(3000, () => {
-            console.log('🚀 LetoFlowers работает на http://localhost:3000');
+if (require.main === module) {
+    ensureDatabaseReady()
+        .then(() => {
+            const port = Number(process.env.PORT) || 3000;
+            app.listen(port, () => {
+                console.log(`LetoFlowers работает на http://localhost:${port}`);
+            });
+        })
+        .catch((err) => {
+            console.error(err);
+            process.exit(1);
         });
-    })
-    .catch((err) => {
-        console.error(err);
-        process.exit(1);
-    });
+}
+
+module.exports = app;
