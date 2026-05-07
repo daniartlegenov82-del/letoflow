@@ -1,12 +1,13 @@
 <style>
     .foot_bg {
-        margin-top: 50px;
+        margin-top: auto;
         background: linear-gradient(rgba(0, 30, 20, 0.85), rgba(0, 30, 20, 0.85)),
             url('https://abrakadabra.fun/uploads/posts/2022-02/1644368527_1-abrakadabra-fun-p-anime-fon-lug-1.jpg');
         background-size: cover;
         background-position: center;
         color: #fff;
-        padding: 80px 0 80px 0;
+        padding: 56px 0 42px 0;
+        width: 100%;
     }
 
     .foot_inner {
@@ -87,7 +88,20 @@
     @media (max-width: 960px) {
         .foot_inner {
             grid-template-columns: 1fr;
-            gap: 40px;
+            gap: 30px;
+        }
+
+        .foot_bg {
+            padding-top: 44px;
+        }
+
+        .foot_col h4 {
+            margin-bottom: 14px;
+        }
+
+        .foot_bottom {
+            margin-top: 26px;
+            padding-top: 18px;
         }
     }
 </style>

@@ -1,9 +1,18 @@
 <style>
+    html,
     body {
+        min-height: 100%;
         background-color: #FDFDFD;
         font-weight: 400;
         color: #1a1a1a;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
     }
 
     h1,
@@ -23,7 +32,8 @@
         position: sticky;
         top: 0;
         z-index: 1000;
-        padding: 20px 0;
+        padding: 14px 0;
+        flex-shrink: 0;
     }
 
     .header_inner {
@@ -33,21 +43,30 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 30px;
+        gap: 18px;
     }
 
     .nav_main {
         display: flex;
         align-items: center;
-        gap: 25px;
+        gap: 20px;
+        min-width: 0;
+    }
+
+    .nav_links {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
     }
 
     .logo {
         color: #ff4d4d;
-        font-size: 28px;
+        font-size: 26px;
         font-weight: 700;
         text-decoration: none;
         letter-spacing: -0.5px;
+        flex-shrink: 0;
     }
 
     .nav_link {
@@ -73,26 +92,128 @@
     .user_area {
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 14px;
+        flex-shrink: 0;
+    }
+
+    .mobile_menu_btn {
+        display: none;
+        width: 42px;
+        height: 42px;
+        border: 1px solid #ececec;
+        border-radius: 12px;
+        background: #fff;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 0;
+    }
+
+    .mobile_menu_btn span {
+        display: block;
+        width: 16px;
+        height: 2px;
+        border-radius: 999px;
+        background: #1a1a1a;
+        transition: transform .2s ease, opacity .2s ease;
+    }
+
+    .mobile_panel {
+        display: none;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px 16px;
+    }
+
+    .mobile_sheet {
+        background: #fff;
+        border: 1px solid #efefef;
+        border-radius: 16px;
+        padding: 14px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+    }
+
+    .mobile_nav_list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .mobile_nav_list a {
+        display: block;
+        text-decoration: none;
+        color: #1a1a1a;
+        padding: 10px 8px;
+        border-radius: 10px;
+        font-size: 15px;
+    }
+
+    .mobile_nav_list a:hover {
+        background: #f8f8f8;
+    }
+
+    @media (max-width: 1024px) {
+        .logo {
+            font-size: 22px;
+        }
+
+        .nav_links {
+            gap: 14px;
+        }
+
+        .nav_link {
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 860px) {
+        .nav_links,
+        .user_area {
+            display: none;
+        }
+
+        .mobile_menu_btn {
+            display: inline-flex;
+            flex-direction: column;
+        }
+
+        .site_header.menu_open .mobile_panel {
+            display: block;
+        }
+
+        .site_header.menu_open .mobile_menu_btn span:nth-child(1) {
+            transform: translateY(6px) rotate(45deg);
+        }
+
+        .site_header.menu_open .mobile_menu_btn span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .site_header.menu_open .mobile_menu_btn span:nth-child(3) {
+            transform: translateY(-6px) rotate(-45deg);
+        }
     }
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
 
-<div class="site_header">
+<div class="site_header" id="siteHeader">
     <div class="header_inner">
         <div class="nav_main">
             <a href="/" class="logo">LetoFlowers</a>
-
-            <a href="/catalog" class="nav_link <%= path === '/catalog' ? 'is_here' : '' %>">Каталог</a>
-            <a href="/custom-order"
-                class="nav_link <%= path === '/custom-order' ? 'is_here' : '' %>">Заказ букета</a>
-            <% if (user && user.role==='user' ) { %>
-                <a href="/account" class="nav_link <%= path === '/account' ? 'is_here' : '' %>">Личный
-                    кабинет</a>
+            <div class="nav_links">
+                <a href="/catalog" class="nav_link <%= path === '/catalog' ? 'is_here' : '' %>">Каталог</a>
+                <a href="/custom-order"
+                    class="nav_link <%= path === '/custom-order' ? 'is_here' : '' %>">Заказ букета</a>
+                <% if (user && user.role==='user' ) { %>
+                    <a href="/account" class="nav_link <%= path === '/account' ? 'is_here' : '' %>">Личный кабинет</a>
                 <% } %>
-                    <a href="/about" class="nav_link <%= path === '/about' ? 'is_here' : '' %>">О нас</a>
-            <a href="/reviews" class="nav_link <%= path === '/reviews' ? 'is_here' : '' %>">Отзывы</a>
-            <a href="/contacts" class="nav_link <%= path === '/contacts' ? 'is_here' : '' %>">Контакты</a>
+                <a href="/about" class="nav_link <%= path === '/about' ? 'is_here' : '' %>">О нас</a>
+                <a href="/reviews" class="nav_link <%= path === '/reviews' ? 'is_here' : '' %>">Отзывы</a>
+                <a href="/contacts" class="nav_link <%= path === '/contacts' ? 'is_here' : '' %>">Контакты</a>
+            </div>
         </div>
 
         <div class="user_area">
@@ -131,5 +252,48 @@
                                 </svg></a>
                             <% } %>
         </div>
+        <button class="mobile_menu_btn" id="mobileMenuBtn" aria-label="Открыть меню" type="button">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+    <div class="mobile_panel" id="mobilePanel">
+        <div class="mobile_sheet">
+            <ul class="mobile_nav_list">
+                <li><a href="/" class="<%= path === '/' ? 'is_here' : '' %>">Главная</a></li>
+                <li><a href="/catalog" class="<%= path === '/catalog' ? 'is_here' : '' %>">Каталог</a></li>
+                <li><a href="/custom-order" class="<%= path === '/custom-order' ? 'is_here' : '' %>">Заказ букета</a></li>
+                <% if (user && user.role==='user' ) { %>
+                    <li><a href="/account" class="<%= path === '/account' ? 'is_here' : '' %>">Личный кабинет</a></li>
+                <% } %>
+                <% if (user && user.role==='admin' ) { %>
+                    <li><a href="/admin" class="<%= path === '/admin' ? 'is_here' : '' %>">Админка</a></li>
+                <% } %>
+                <li><a href="/about" class="<%= path === '/about' ? 'is_here' : '' %>">О нас</a></li>
+                <li><a href="/reviews" class="<%= path === '/reviews' ? 'is_here' : '' %>">Отзывы</a></li>
+                <li><a href="/contacts" class="<%= path === '/contacts' ? 'is_here' : '' %>">Контакты</a></li>
+                <% if (user) { %>
+                    <li><a href="/logout">Выйти</a></li>
+                <% } else { %>
+                    <li><a href="/login" class="<%= path === '/login' ? 'is_here' : '' %>">Войти</a></li>
+                <% } %>
+            </ul>
+        </div>
     </div>
 </div>
+<script>
+    (function () {
+        var btn = document.getElementById('mobileMenuBtn');
+        var header = document.getElementById('siteHeader');
+        var panel = document.getElementById('mobilePanel');
+        if (!btn || !header || !panel) return;
+        btn.addEventListener('click', function () {
+            header.classList.toggle('menu_open');
+        });
+        panel.addEventListener('click', function (e) {
+            if (e.target.tagName === 'A') header.classList.remove('menu_open');
+        });
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 860) header.classList.remove('menu_open');
+        });
+    })();
+</script>

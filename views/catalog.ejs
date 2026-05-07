@@ -204,6 +204,57 @@
             background: #bdbdbd;
             cursor: not-allowed;
         }
+
+        @media (max-width: 980px) {
+            .shop_layout {
+                grid-template-columns: 1fr;
+                gap: 26px;
+                margin-top: 28px;
+            }
+
+            .filters {
+                position: static;
+                border: 1px solid #efefef;
+                border-radius: 16px;
+                padding: 16px;
+                background: #fff;
+            }
+
+            .goods_grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px;
+            }
+
+            .goods_img {
+                height: 220px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .shop_layout {
+                padding: 0 14px;
+                margin-top: 20px;
+                margin-bottom: 36px;
+            }
+
+            .cat_links {
+                max-height: 220px;
+                overflow: auto;
+            }
+
+            .price_row {
+                gap: 8px;
+            }
+
+            .goods_grid {
+                grid-template-columns: 1fr;
+            }
+
+            .goods_name {
+                height: auto;
+                margin-bottom: 8px;
+            }
+        }
     </style>
 
     <div class="shop_layout">
@@ -242,7 +293,7 @@
         </aside>
 
         <main>
-            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px; gap: 12px; flex-wrap: wrap;">
                 <h1 style="font-size: 32px;">
                     <%= query.category || 'Все товары' %>
                 </h1>
