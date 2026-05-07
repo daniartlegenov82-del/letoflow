@@ -14,6 +14,7 @@
             margin: 0 auto;
             padding: 0 20px;
             box-sizing: border-box;
+            width: 100%;
         }
 
         .home_title {
@@ -67,6 +68,7 @@
             right: 20px;
             bottom: -30px;
             height: 110%;
+            max-width: 55%;
             z-index: 1;
             pointer-events: none;
             object-fit: contain;
@@ -137,7 +139,6 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
-            height: 550px;
             margin-bottom: 80px;
         }
 
@@ -183,6 +184,11 @@
             align-items: center;
             border: 1px solid rgba(255, 255, 255, 0.3);
             transition: 0.4s;
+        }
+
+        .faq_q {
+            font-size: 18px;
+            line-height: 1.45;
         }
 
         .nav_card:hover {
@@ -285,7 +291,6 @@
 
             .nav_cards {
                 grid-template-columns: repeat(2, 1fr);
-                height: auto;
             }
 
             .nav_card {
@@ -326,13 +331,15 @@
 
             .promo_text p {
                 font-size: 14px;
-                max-width: 78%;
+                max-width: 92%;
             }
 
             .promo_img {
                 right: -10px;
                 bottom: 0;
-                height: 72%;
+                height: 62%;
+                max-width: 50%;
+                opacity: 0.9;
             }
 
             .cat_grid {
@@ -357,7 +364,8 @@
             }
 
             .nav_cards {
-                grid-template-columns: 1fr;
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 12px;
                 margin-bottom: 50px;
             }
@@ -372,6 +380,20 @@
                 padding: 15px;
             }
 
+            .nav_card_inner h3 {
+                font-size: 18px;
+            }
+
+            .faq_q {
+                font-size: 16px;
+                padding-right: 10px;
+            }
+
+            .faq_a {
+                font-size: 14px;
+                line-height: 1.55;
+            }
+
             .faq_block {
                 margin-top: 30px;
                 margin-bottom: 54px;
@@ -380,6 +402,64 @@
 
             .faq_head {
                 padding: 18px 0;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .home_wrap {
+                padding: 0 12px;
+            }
+
+            .home_title {
+                font-size: 24px;
+                margin-top: 20px;
+            }
+
+            .promo_slider {
+                height: 300px;
+                border-radius: 18px;
+            }
+
+            .promo_slide {
+                padding: 14px;
+            }
+
+            .promo_text h2 {
+                font-size: 22px;
+                line-height: 1.2;
+            }
+
+            .promo_text p {
+                font-size: 13px;
+                max-width: 100%;
+            }
+
+            .promo_img {
+                height: 50%;
+                max-width: 48%;
+            }
+
+            .cat_tile {
+                height: 114px;
+                padding: 10px;
+            }
+
+            .cat_tile p {
+                font-size: 13px;
+            }
+
+            .tile_img {
+                width: 72px;
+                height: 72px;
+            }
+
+            .nav_card {
+                min-height: 164px;
+            }
+
+            .nav_card_inner {
+                margin: 8px;
+                padding: 12px;
             }
         }
     </style>
