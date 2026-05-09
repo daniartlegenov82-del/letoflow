@@ -1,3 +1,4 @@
+//короткие пометки для навигации по файлу
 const mongoose = require('mongoose');
 const productSchema = new mongoose.Schema({
     name: String,

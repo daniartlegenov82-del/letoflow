@@ -1,3 +1,4 @@
+//короткие пометки для навигации по файлу
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');

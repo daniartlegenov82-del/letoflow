@@ -152,6 +152,7 @@
         <h1 class="page_title">Отзывы клиентов</h1>
 
         <div class="reviews_layout">
+            <!--лента опубликованных отзывов-->
             <div class="review_list">
                 <% if (reviews.length===0) { %>
                     <div style="text-align: center; padding: 100px 0; color: #ccc;">
@@ -185,6 +186,7 @@
             </div>
 
             <aside class="post_form">
+                <!--форма отправки нового отзыва-->
                 <h2>Оставить отзыв</h2>
                 <form action="/reviews" method="POST">
                     <div class="field_group">

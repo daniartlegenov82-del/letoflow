@@ -1,12 +1,14 @@
 <%- include('partials/header') %>
     <style>
         .shop_layout {
+            width: 100%;
             max-width: 1200px;
             margin: 40px auto;
             padding: 0 20px;
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 280px minmax(0, 1fr);
             gap: 50px;
+            align-items: start;
         }
 
         .filters {
@@ -109,7 +111,7 @@
 
         .goods_grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 30px;
         }
 
@@ -259,6 +261,7 @@
 
     <div class="shop_layout">
         <aside class="filters">
+            <!--панель фильтрации по категории и цене-->
             <form action="/catalog" method="GET" id="filterForm">
                 <div class="filter_block">
                     <span class="filter_title">Категории</span>
@@ -293,6 +296,7 @@
         </aside>
 
         <main>
+            <!--заголовок выбранного раздела и количество найденных товаров-->
             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px; gap: 12px; flex-wrap: wrap;">
                 <h1 style="font-size: 32px;">
                     <%= query.category || 'Все товары' %>
@@ -301,6 +305,7 @@
             </div>
 
             <div class="goods_grid">
+                <!--карточки товаров и кнопка бронирования-->
                 <% if (products.length===0) { %>
                     <div style="grid-column: 1/-1; text-align: center; padding: 100px 0; color: #ccc;">
                         <p style="font-size: 20px;">К сожалению, ничего не найдено 🌸</p>

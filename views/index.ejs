@@ -467,6 +467,7 @@
     <div class="home_wrap">
         <h1 class="home_title">Лучшие цветы в Оренбурге</h1>
 
+        <!--слайдер на главной-->
         <div class="swiper promo_slider">
             <div class="swiper-wrapper">
                 <div class="swiper-slide promo_slide" style="background: #FFF0F0;">
@@ -495,6 +496,7 @@
             <div class="swiper-pagination"></div>
         </div>
 
+        <!--быстрые категории каталога-->
         <div class="cat_grid">
             <% const cats=[ {n: 'Все товары' ,
                 i: 'https://psv4.userapi.com/s/v1/d2/F9w0vJ7wLc_aPo9w_bSKlDueVRfddv0OnWqONpU1T0ayncnAD7DKb3OfAvbdLkjgczQ-pk7mn7bF9ElcmNy-F6ps3kqj_StPw26b5tYgQtQ0NKbCVmPpntLBLj_DAY1Es3IuCQ8rvZ04/Group_1_5.png'
@@ -519,6 +521,7 @@
                     <% }) %>
         </div>
 
+        <!--карточки с переходами по основным страницам-->
         <h2 style="font-size: 32px; margin-bottom: 25px;">Разделы</h2>
 
         <div class="nav_cards">
@@ -548,6 +551,7 @@
             </a>
         </div>
 
+        <!--faq-блок с частыми вопросами-->
         <div class="faq_block">
             <h2 style="font-size: 32px; margin-bottom: 30px;">Ответы на частые вопросы</h2>
             <% const faqs=[ {q: "Откуда вы привозите цветы в Оренбург?" ,
@@ -579,6 +583,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
+        //инициализация слайдера
         new Swiper('.promo_slider', {
             loop: true,
             autoplay: { delay: 5000 },
