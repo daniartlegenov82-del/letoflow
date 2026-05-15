@@ -173,6 +173,7 @@
                                             <th>Клиент</th>
                                             <th>Телефон</th>
                                             <th>Когда заберут</th>
+                                            <th>Статус</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -195,6 +196,19 @@
                                                 </td>
                                                 <td>
                                                     <%= r.pickupAt %>
+                                                </td>
+                                                <td>
+                                                    <% const rs=r.status || 'not_ready'; %>
+                                                    <form class="status_form" method="POST"
+                                                        action="/admin/reservations/<%= r._id %>/status">
+                                                        <select name="status" onchange="this.form.submit()">
+                                                            <% reservationStatuses.forEach(sv=> { %>
+                                                                <option value="<%= sv %>" <%=rs===sv ? 'selected' : '' %>><%=
+                                                                        reservationStatusLabels[sv] || sv %>
+                                                                </option>
+                                                                <% }) %>
+                                                        </select>
+                                                    </form>
                                                 </td>
                                             </tr>
                                             <% }) %>

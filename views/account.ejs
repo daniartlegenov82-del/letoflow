@@ -188,6 +188,11 @@
             color: #52525b;
         }
 
+        .tag_status.waiting {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
         .empty_text {
             padding: 40px 20px;
             text-align: center;
@@ -327,6 +332,7 @@
                                             <th>Букет</th>
                                             <th>Контакт</th>
                                             <th>Когда заберёте</th>
+                                            <th>Статус</th>
                                             <th>Создано</th>
                                         </tr>
                                     </thead>
@@ -347,6 +353,12 @@
                                                 </td>
                                                 <td>
                                                     <%= r.pickupAt %>
+                                                </td>
+                                                <td>
+                                                    <% const rs=r.status || 'not_ready'; const rlab=reservationStatusLabels[rs] || rs; const rcls=rs==='ready' ? 'ready' : (rs==='issued' ? 'done' : 'waiting'); %>
+                                                    <span class="tag_status <%= rcls %>">
+                                                        <%= rlab %>
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     <%= new Date(r.createdAt).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' }) %>

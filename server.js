@@ -256,6 +256,13 @@ const ORDER_STATUS_LABELS = {
     completed: 'Выдан'
 };
 
+const RESERVATION_STATUS_VALUES = ['not_ready', 'ready', 'issued'];
+const RESERVATION_STATUS_LABELS = {
+    not_ready: 'Не готов',
+    ready: 'Готов',
+    issued: 'Выдан'
+};
+
 const CustomBouquetOrder = mongoose.model('CustomBouquetOrder', {
     orderCode: { type: String, required: true, unique: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
@@ -292,6 +299,11 @@ const BouquetReservation = mongoose.model('BouquetReservation', {
     firstName: { type: String, required: true },
     phone: { type: String, required: true },
     pickupAt: { type: String, required: true },
+    status: {
+        type: String,
+        enum: RESERVATION_STATUS_VALUES,
+        default: 'not_ready'
+    },
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -638,6 +650,7 @@ app.get('/account', requireCustomer, async (req, res) => {
             orders,
             reservations,
             orderStatusLabels: ORDER_STATUS_LABELS,
+            reservationStatusLabels: RESERVATION_STATUS_LABELS,
             profileMsg: req.query.msg || null,
             profileErr: req.query.err || null
         });
@@ -668,7 +681,14 @@ app.get('/admin/orders', isAdmin, async (req, res) => {
             CustomBouquetOrder.find().sort({ createdAt: -1 }).lean(),
             BouquetReservation.find().sort({ createdAt: -1 }).lean()
         ]);
-        res.render('admin-orders', { orders, reservations, orderStatusLabels: ORDER_STATUS_LABELS, orderStatuses: ORDER_STATUS_VALUES });
+        res.render('admin-orders', {
+            orders,
+            reservations,
+            orderStatusLabels: ORDER_STATUS_LABELS,
+            orderStatuses: ORDER_STATUS_VALUES,
+            reservationStatusLabels: RESERVATION_STATUS_LABELS,
+            reservationStatuses: RESERVATION_STATUS_VALUES
+        });
     } catch (e) {
         res.status(500).send('Ошибка загрузки заказов');
     }
@@ -679,6 +699,18 @@ app.post('/admin/orders/:id/status', isAdmin, async (req, res) => {
         const status = (req.body.status || '').trim();
         if (!ORDER_STATUS_VALUES.includes(status)) return res.redirect('/admin/orders');
         await CustomBouquetOrder.findByIdAndUpdate(req.params.id, { status });
+        res.redirect('/admin/orders');
+    } catch (e) {
+        res.redirect('/admin/orders');
+    }
+});
+
+app.post('/admin/reservations/:id/status', isAdmin, async (req, res) => {
+    try {
+        if (!mongoose.isValidObjectId(req.params.id)) return res.redirect('/admin/orders');
+        const status = (req.body.status || '').trim();
+        if (!RESERVATION_STATUS_VALUES.includes(status)) return res.redirect('/admin/orders');
+        await BouquetReservation.findByIdAndUpdate(req.params.id, { status });
         res.redirect('/admin/orders');
     } catch (e) {
         res.redirect('/admin/orders');

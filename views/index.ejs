@@ -135,69 +135,95 @@
         }
 
 
-        .nav_cards {
+        .sections_title {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0 0 24px;
+            color: #1a1a1a;
+        }
+
+        .sections_grid {
+            --sections-gap: 14px;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: var(--sections-gap);
             margin-bottom: 80px;
         }
 
-        .nav_card {
+        .sections_card {
             position: relative;
-            border-radius: 35px;
+            display: block;
+            height: 520px;
+            border-radius: 32px;
             overflow: hidden;
             text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
+            background: #e6e6e6;
+        }
+
+        /* одно фото на всю строку — каждая карточка показывает свою четверть */
+        .sections_card__bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: calc(400% + 42px);
+            height: 100%;
             background-image: url('https://content3.flowwow-images.com/data/blog/52/1684843145_26233352.jpg');
-            background-size: 400% 105%;
-            transition: all 0.5s ease;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            pointer-events: none;
         }
 
-        .nav_card:nth-child(1) {
-            background-position: 0% 50%;
+        .sections_card--1 .sections_card__bg {
+            left: calc(-100% - 14px);
         }
 
-        .nav_card:nth-child(2) {
-            background-position: 33.33% 50%;
+        .sections_card--2 .sections_card__bg {
+            left: calc(-200% - 28px);
         }
 
-        .nav_card:nth-child(3) {
-            background-position: 66.66% 50%;
+        .sections_card--3 .sections_card__bg {
+            left: calc(-300% - 42px);
         }
 
-        .nav_card:nth-child(4) {
-            background-position: 100% 50%;
-        }
-
-        .nav_card_inner {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 25px;
-            margin: 15px;
-            border-radius: 25px;
+        .sections_card__label {
+            position: absolute;
+            z-index: 2;
+            left: 12px;
+            right: 12px;
+            bottom: 14px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: 0.4s;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 15px 22px;
+            border-radius: 999px;
+            background: rgba(235, 235, 235, 0.92);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .sections_card__text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            line-height: 1.2;
+        }
+
+        .sections_card__arrow {
+            font-size: 20px;
+            line-height: 1;
+            color: #1a1a1a;
+            flex-shrink: 0;
+        }
+
+        .sections_card:hover .sections_card__label {
+            background: rgba(245, 245, 245, 0.96);
         }
 
         .faq_q {
             font-size: 18px;
             line-height: 1.45;
-        }
-
-        .nav_card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav_card:hover .nav_card_inner {
-            background: rgba(255, 255, 255, 0.9);
         }
 
         .faq_block {
@@ -289,12 +315,30 @@
                 bottom: 18px !important;
             }
 
-            .nav_cards {
-                grid-template-columns: repeat(2, 1fr);
+            .sections_grid {
+                --sections-gap: 12px;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
-            .nav_card {
-                min-height: 260px;
+            .sections_card {
+                height: 400px;
+                border-radius: 26px;
+            }
+
+            .sections_card__bg {
+                width: calc(400% + 36px);
+            }
+
+            .sections_card--1 .sections_card__bg {
+                left: calc(-100% - 12px);
+            }
+
+            .sections_card--2 .sections_card__bg {
+                left: calc(-200% - 24px);
+            }
+
+            .sections_card--3 .sections_card__bg {
+                left: calc(-300% - 36px);
             }
         }
 
@@ -363,25 +407,24 @@
                 height: 84px;
             }
 
-            .nav_cards {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 12px;
+            .sections_grid {
                 margin-bottom: 50px;
             }
 
-            .nav_card {
-                min-height: 190px;
-                border-radius: 24px;
+            .sections_card {
+                height: 340px;
+                border-radius: 22px;
             }
 
-            .nav_card_inner {
-                margin: 10px;
-                padding: 15px;
+            .sections_card__label {
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                padding: 12px 16px;
             }
 
-            .nav_card_inner h3 {
-                font-size: 18px;
+            .sections_card__text {
+                font-size: 14px;
             }
 
             .faq_q {
@@ -453,13 +496,8 @@
                 height: 72px;
             }
 
-            .nav_card {
-                min-height: 164px;
-            }
-
-            .nav_card_inner {
-                margin: 8px;
-                padding: 12px;
+            .sections_card__label {
+                padding: 10px 14px;
             }
         }
     </style>
@@ -522,32 +560,36 @@
         </div>
 
         <!--карточки с переходами по основным страницам-->
-        <h2 style="font-size: 32px; margin-bottom: 25px;">Разделы</h2>
+        <h2 class="sections_title">Разделы</h2>
 
-        <div class="nav_cards">
-            <a href="/catalog" class="nav_card">
-                <div class="nav_card_inner">
-                    <h3>В каталог</h3>
-                    <div style="font-size: 20px;">➔</div>
-                </div>
+        <div class="sections_grid">
+            <a href="/catalog" class="sections_card sections_card--0">
+                <span class="sections_card__bg" aria-hidden="true"></span>
+                <span class="sections_card__label">
+                    <span class="sections_card__text">В каталог</span>
+                    <span class="sections_card__arrow" aria-hidden="true">→</span>
+                </span>
             </a>
-            <a href="/about" class="nav_card">
-                <div class="nav_card_inner">
-                    <h3>О нас</h3>
-                    <div style="font-size: 20px;">➔</div>
-                </div>
+            <a href="/about" class="sections_card sections_card--1">
+                <span class="sections_card__bg" aria-hidden="true"></span>
+                <span class="sections_card__label">
+                    <span class="sections_card__text">О нас</span>
+                    <span class="sections_card__arrow" aria-hidden="true">→</span>
+                </span>
             </a>
-            <a href="/reviews" class="nav_card">
-                <div class="nav_card_inner">
-                    <h3>Отзывы</h3>
-                    <div style="font-size: 20px;">➔</div>
-                </div>
+            <a href="/reviews" class="sections_card sections_card--2">
+                <span class="sections_card__bg" aria-hidden="true"></span>
+                <span class="sections_card__label">
+                    <span class="sections_card__text">Отзывы</span>
+                    <span class="sections_card__arrow" aria-hidden="true">→</span>
+                </span>
             </a>
-            <a href="/contacts" class="nav_card">
-                <div class="nav_card_inner">
-                    <h3>Контакты</h3>
-                    <div style="font-size: 20px;">➔</div>
-                </div>
+            <a href="/contacts" class="sections_card sections_card--3">
+                <span class="sections_card__bg" aria-hidden="true"></span>
+                <span class="sections_card__label">
+                    <span class="sections_card__text">Контакты</span>
+                    <span class="sections_card__arrow" aria-hidden="true">→</span>
+                </span>
             </a>
         </div>
 
