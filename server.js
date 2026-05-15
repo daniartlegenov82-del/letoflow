@@ -717,26 +717,6 @@ app.post('/admin/reservations/:id/status', isAdmin, async (req, res) => {
     }
 });
 
-app.post('/admin/orders/:id/delete', isAdmin, async (req, res) => {
-    try {
-        if (!mongoose.isValidObjectId(req.params.id)) return res.redirect('/admin/orders');
-        await CustomBouquetOrder.findByIdAndDelete(req.params.id);
-        res.redirect('/admin/orders');
-    } catch (e) {
-        res.redirect('/admin/orders');
-    }
-});
-
-app.post('/admin/reservations/:id/delete', isAdmin, async (req, res) => {
-    try {
-        if (!mongoose.isValidObjectId(req.params.id)) return res.redirect('/admin/orders');
-        await BouquetReservation.findByIdAndDelete(req.params.id);
-        res.redirect('/admin/orders');
-    } catch (e) {
-        res.redirect('/admin/orders');
-    }
-});
-
 app.get('/reviews', async (req, res) => {
     const reviews = await Review.find().sort({ createdAt: -1 });
     res.render('reviews', { reviews });
